@@ -1,5 +1,8 @@
-.claude/
+.claude/*
+!.claude/settings.json
+!.claude/skills/
 node_modules/
 .env
 dist/
 *.local
+supabase/.temp/
