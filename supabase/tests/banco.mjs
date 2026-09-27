@@ -130,6 +130,11 @@ const t1 = (await q(`select public.regenerar_token($1,'resposta') t`, [nova]))[0
 ok(t0 !== t1 && t1.length === 32, 'regenerar_token gera novo token');
 await db.exec(`delete from public.empresas where id='${emp}'`);
 ok((await num(`select count(*)::int n from public.empresas`)) === 3, 'analista NÃO exclui empresa (RLS)');
+await como(analista);
+const dup = (await q(`select public.duplicar_questionario($1) id`, [qid]))[0].id;
+ok((await num(`select count(*)::int n from public.grupos where questionario_id=$1`, [dup])) === 6 && (await num(`select count(*)::int n from public.perguntas p join public.grupos g on g.id=p.grupo_id where g.questionario_id=$1`, [dup])) === 30, 'duplicar_questionario copia 6 grupos e 30 perguntas');
+ok((await q(`select titulo t from public.questionarios where id=$1`, [dup]))[0].t.endsWith('(cópia)'), 'duplicata recebe o sufixo (cópia)');
+ok((await erro(`select public.duplicar_questionario(gen_random_uuid())`))?.includes('questionario_nao_encontrado'), 'duplicar questionário inexistente falha com código claro');
 await como(admin);
 await db.exec(`delete from public.empresas where id='${emp}'`);
 await db.exec(`reset role`);

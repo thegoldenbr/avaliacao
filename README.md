@@ -8,7 +8,7 @@ Sistema para uma empresa avaliadora medir o desempenho de outras empresas com qu
 - Segredos: no navegador entram **apenas** a URL do projeto e a chave publishable. A chave da IA e a `service_role` ficam nos *secrets* das Edge Functions. Toda regra de acesso é garantida por RLS e RPCs no banco.
 - Design: [PROJECT_STYLE.md](PROJECT_STYLE.md) e [docs/design-system.md](docs/design-system.md). Mockups em `mockups/` (publicados em `/mockups/`).
 
-> Status: Fase 1 (base) concluída. Veja o plano completo de fases no documento de especificação.
+> Status: Fases 0 (design), 1 (base) e 2 (autenticação, usuários, empresas e questionários) concluídas. Próxima: Fase 3 (avaliações e formulário público).
 
 ## Desenvolvimento local
 
@@ -36,6 +36,8 @@ npm run dev
 A URL do projeto e a chave publishable (públicas) já estão em `.env.production`, então não é preciso cadastrar variáveis no GitHub.
 
 **Antes de convidar usuários (Fase 2):** em *Authentication > Sign In / Providers*, desative **Allow new users to sign up**, e em *URL Configuration* defina **Site URL** = `https://thegoldenbr.github.io/avaliacao/` e inclua também em **Redirect URLs** esse endereço e `http://localhost:5173/`. Mesmo com o cadastro aberto, quem se cadastra não acessa nada (não tem perfil), mas o correto é desligá-lo.
+
+**Convites:** o admin gera o link em *Configurações > Usuários > Convidar usuário* e o envia por WhatsApp ou e-mail (a função `convidar-usuario` não depende do envio de e-mails do Supabase, que tem limite baixo). Para publicar a função: `npx supabase functions deploy convidar-usuario --use-api`. Ela só aceita os endereços de `APP_URLS` (padrão: o do GitHub Pages e `http://localhost:5173/`); para outro domínio, `npx supabase secrets set APP_URLS="https://seu-dominio/,http://localhost:5173/"`.
 
 **Chave da IA (Fase 5):** você mesmo cadastra em *Edge Functions > Secrets* (`ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`); nunca no repositório.
 

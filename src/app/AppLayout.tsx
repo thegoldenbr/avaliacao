@@ -1,11 +1,12 @@
 import { Suspense, useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Building2, ClipboardCheck, FileText, Home, MoreHorizontal, PanelLeft, SlidersHorizontal, type LucideIcon } from 'lucide-react';
+import { Building2, ClipboardCheck, FileText, Home, LogOut, MoreHorizontal, PanelLeft, SlidersHorizontal, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlternarTema } from '@/features/tema/AlternarTema';
 import { LogoMarca } from '@/features/marca/LogoMarca';
+import { useAuth } from '@/features/auth/AuthProvider';
 
 interface ItemNavegacao {
   para: string;
@@ -21,7 +22,7 @@ const ITENS: ItemNavegacao[] = [
   { para: '/questionarios', rotulo: 'Questionários', icone: FileText },
 ];
 const ITEM_CONFIG: ItemNavegacao = { para: '/configuracoes', rotulo: 'Configurações', icone: SlidersHorizontal };
-const ITEM_MAIS: ItemNavegacao = { para: '/configuracoes', rotulo: 'Mais', icone: MoreHorizontal };
+const ITEM_MAIS: ItemNavegacao = { para: '/mais', rotulo: 'Mais', icone: MoreHorizontal };
 
 function lerLateralRecolhida(): boolean {
   try {
@@ -32,6 +33,8 @@ function lerLateralRecolhida(): boolean {
 }
 
 function BarraLateral({ recolhida, onAlternar }: { recolhida: boolean; onAlternar: () => void }) {
+  const { perfil, sair } = useAuth();
+  const itens = perfil?.papel === 'admin' ? [...ITENS, ITEM_CONFIG] : ITENS;
   return (
     <aside
       className={cn(
@@ -52,7 +55,7 @@ function BarraLateral({ recolhida, onAlternar }: { recolhida: boolean; onAlterna
         </Button>
       </div>
       <nav aria-label="Principal" className="flex flex-col gap-0.5">
-        {[...ITENS, ITEM_CONFIG].map(({ para, rotulo, icone: Icone, fim }) => (
+        {itens.map(({ para, rotulo, icone: Icone, fim }) => (
           <NavLink
             key={para}
             to={para}
@@ -70,8 +73,18 @@ function BarraLateral({ recolhida, onAlternar }: { recolhida: boolean; onAlterna
           </NavLink>
         ))}
       </nav>
-      <div className="mt-auto flex items-center justify-between">
-        <AlternarTema />
+      <div className="mt-auto flex flex-col gap-2">
+        <div className={cn('flex items-center justify-between gap-2', recolhida && 'flex-col')}>
+          <div className={cn('min-w-0 text-sm', recolhida && 'sr-only')}>
+            <p className="truncate font-semibold">{perfil?.nome}</p>
+            <p className="text-muted">{perfil?.papel === 'admin' ? 'Administrador' : 'Analista'}</p>
+          </div>
+          <AlternarTema />
+        </div>
+        <Button variant="ghost" onClick={() => void sair()} aria-label="Sair" title="Sair" className="justify-start">
+          <LogOut className="size-5 flex-none" aria-hidden="true" />
+          <span className={cn(recolhida && 'sr-only')}>Sair</span>
+        </Button>
       </div>
     </aside>
   );

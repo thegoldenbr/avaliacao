@@ -116,12 +116,12 @@ begin
   returning id into v_serra;
   insert into public.empresas (razao_social, nome_fantasia, cnpj, segmento, porte, municipio, uf,
                                responsavel_nome, responsavel_cargo, responsavel_email, responsavel_telefone)
-  values ('Clínica Vida Plena Ltda.', 'Vida Plena', '23456789000110', 'Saúde', 'Pequena empresa',
+  values ('Clínica Vida Plena Ltda.', 'Vida Plena', '23456789000195', 'Saúde', 'Pequena empresa',
           'Belo Horizonte', 'MG', 'Dra. Camila Torres', 'Diretora clínica', 'camila@vidaplena.example', '31999990002')
   returning id into v_clinica;
   insert into public.empresas (razao_social, nome_fantasia, cnpj, segmento, porte, municipio, uf,
                                responsavel_nome, responsavel_cargo, responsavel_email, responsavel_telefone)
-  values ('Padaria Pão Nobre Ltda.', 'Pão Nobre', '34567890000124', 'Alimentação', 'Microempresa',
+  values ('Padaria Pão Nobre Ltda.', 'Pão Nobre', '34567890000130', 'Alimentação', 'Microempresa',
           'Curitiba', 'PR', 'Sérgio Batista', 'Proprietário', 'sergio@paonobre.example', '41999990003')
   returning id into v_padaria;
 

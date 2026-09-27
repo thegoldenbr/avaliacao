@@ -576,6 +576,10 @@ export type Database = {
         }
         Returns: string
       }
+      duplicar_questionario: {
+        Args: { p_questionario_id: string }
+        Returns: string
+      }
       eh_admin: { Args: never; Returns: boolean }
       eh_usuario_ativo: { Args: never; Returns: boolean }
       gerar_token: { Args: never; Returns: string }
