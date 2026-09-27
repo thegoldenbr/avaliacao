@@ -5,15 +5,14 @@ import { iniciarPagina } from '../shell.js';
 import { supabase, dados } from '../supabase.js';
 import { abrirDialogo, confirmar, toast } from '../ui.js';
 import { renderRelatorio } from '../relatorio-vista.js';
-import { qrSvg } from '../qr.js';
 import { mensagemDeErro } from '../lib/erros.js';
 import { formatarData } from '../lib/formatacao.js';
-import { linkEmail, linkWhatsApp } from '../lib/avaliacao.js';
 import { relatorioEmBranco } from '../lib/relatorio-ia.js';
 import { montarSnapshot, normalizarOpcoes, problemasParaPublicar } from '../lib/snapshot.js';
-import { urlDaPagina } from '../supabase.js';
 import { carregarIndicadores, statusTemIndicadores } from './_avaliacao-indicadores.js';
 import { ITEM_NOVO, definirCaminho, formularioDoRelatorio } from './_editor-form.js';
+import { montarAcessoCliente } from './_acesso-cliente.js';
+import { completarConteudo } from './_snapshot-atual.js';
 
 const { main } = await iniciarPagina({ ativo: 'avaliacoes' });
 const id = new URLSearchParams(location.search).get('id');
@@ -29,13 +28,7 @@ let linha = dados(await supabase.from('relatorios').select('*').eq('avaliacao_id
 const base = await carregarIndicadores(av);
 const gruposLista = base.ind.grupos.map((g) => ({ id: g.id, nome: g.nome }));
 
-const completar = (c) => {
-  const modelo = relatorioEmBranco(base.ind.grupos);
-  // Cópia profunda: editar o rascunho nunca pode alterar o texto original da IA (conteudo_ia).
-  const saida = { ...modelo, ...structuredClone(c ?? {}) };
-  saida.analise_por_grupo = base.ind.grupos.map((g) => ({ grupo: g.id, texto: c?.analise_por_grupo?.find((a) => a.grupo === g.id)?.texto ?? '' }));
-  return saida;
-};
+const completar = (c) => completarConteudo(c, base.ind.grupos);
 let conteudo = completar(linha?.conteudo_rascunho);
 let opcoes = normalizarOpcoes(linha?.opcoes);
 let sujo = false;
@@ -51,7 +44,7 @@ main.innerHTML = String(html`<section class="pilha pilha--lg">
     <p class="migalha"><a href="avaliacoes.html">Avaliações</a> ${icone('dir', 'icone--sm')} <a href="avaliacao.html?id=${av.id}">${nomeEmpresa}</a> ${icone('dir', 'icone--sm')} Relatório</p>
     <div class="pagina-topo" style="margin-bottom:0"><div><h1>Relatório</h1><p class="linha"><span class="badge" id="badge-status"></span><span class="muted" id="estado-salvo" role="status"></span></p></div>
       <div class="linha"><button class="btn btn--sec" id="btn-ia">${icone('ia', 'icone--sm')}Gerar com IA</button><button class="btn" id="btn-publicar">Publicar relatório</button><button class="btn btn--ghost" id="btn-despublicar" hidden>Despublicar</button></div></div>
-    <div id="aviso-conflito"></div><div id="painel-senha"></div><div id="painel-publicacao"></div>
+    <div id="aviso-conflito"></div><div id="acesso-cliente"></div>
   </header>
   <div class="editor">
     <div>
@@ -103,44 +96,7 @@ function desenharEstado() {
   el('badge-status').className = `badge ${publicada ? 'badge--ok' : 'badge--aviso'}`;
   el('btn-publicar').textContent = publicada ? 'Atualizar publicação' : 'Publicar relatório';
   el('btn-despublicar').hidden = !publicada;
-  const painel = el('painel-publicacao');
-  if (!publicada) return void (painel.innerHTML = '');
-  const link = `${urlDaPagina('relatorio.html')}#${av.token_relatorio}`;
-  const texto = `Olá! O relatório de desempenho de ${nomeEmpresa} está disponível neste link: ${link}${av.relatorio_senha ? `\nSenha de acesso: ${av.relatorio_senha}` : ''}`;
-  painel.innerHTML = String(html`<div class="cartao pilha"><h2 style="font-size:1.0625rem">Link do dashboard do cliente</h2>
-    <div class="link-copia"><input class="input" id="link-relatorio" readonly aria-label="Link do relatório" value="${link}"><button class="btn btn--sec btn--icone" id="copiar-relatorio" aria-label="Copiar link">${icone('copia')}</button></div>
-    <div class="linha" style="align-items:flex-start;gap:1.5rem">${qrSvg(link, 'QR code do relatório')}<div class="linha">
-      <a class="btn btn--sec" target="_blank" rel="noopener noreferrer" href="${linkWhatsApp({ telefone: empresa.responsavel_telefone, texto })}">${icone('zap', 'icone--sm')}WhatsApp</a>
-      <a class="btn btn--sec" href="${linkEmail({ para: empresa.responsavel_email, assunto: `Relatório de desempenho: ${nomeEmpresa}`, corpo: texto })}">${icone('email', 'icone--sm')}E-mail</a>
-      <a class="btn btn--sec" target="_blank" rel="noopener noreferrer" href="${link}">${icone('olho', 'icone--sm')}Abrir</a>
-      <button class="btn btn--ghost" id="novo-link-relatorio">Gerar novo link</button></div></div>
-    <p class="muted">Publicado em ${av.publicado_em ? formatarData(av.publicado_em) : '—'}. Se o link vazar, gere outro: o anterior deixa de funcionar.</p></div>`);
-}
-
-
-/* ---------- senha do dashboard do cliente ---------- */
-function desenharSenha() {
-  const ativa = Boolean(av.relatorio_senha);
-  el('painel-senha').innerHTML = String(html`<div class="cartao pilha"><h2 style="font-size:1.0625rem">Acesso do cliente</h2>
-    <label class="interruptor"><span>Exigir senha para abrir o dashboard do cliente</span><input type="checkbox" id="senha-ativa" ${ativa ? html`checked` : ''}></label>
-    ${ativa
-      ? html`<div class="linha"><span class="muted">Senha atual:</span><b class="num" id="senha-codigo" style="font-size:1.5rem;letter-spacing:.15em">${av.relatorio_senha}</b>
-          <button class="btn btn--sec btn--sm" id="copiar-senha">${icone('copia', 'icone--sm')}Copiar</button>
-          <button class="btn btn--sec btn--sm" id="nova-senha">${icone('editar', 'icone--sm')}Gerar nova senha</button></div>
-        <p class="muted">Envie a senha ao cliente junto com o link. Ao gerar uma nova, a anterior para de funcionar e o cliente precisa digitar a nova. 5 erros seguidos bloqueiam o link por 10 minutos.</p>`
-      : html`<p class="muted">Sem senha, qualquer pessoa com o link abre o dashboard.</p>`}</div>`);
-}
-
-async function definirSenha(ativar, renovar = false) {
-  const { data, error } = await supabase.rpc('definir_senha_relatorio', { p_avaliacao_id: av.id, p_ativar: ativar, p_renovar: renovar });
-  if (error) {
-    toast(mensagemDeErro(error, 'Não foi possível alterar a senha do dashboard.'), 'erro');
-    return desenharSenha();
-  }
-  av.relatorio_senha = data;
-  desenharSenha();
-  desenharEstado();
-  toast(!ativar ? 'Senha desativada: o link abre direto.' : renovar ? 'Nova senha gerada. A anterior não funciona mais.' : 'Senha ativada.');
+  acesso.atualizar();
 }
 
 /* ---------- salvamento ---------- */
@@ -259,9 +215,6 @@ formEl.addEventListener('input', (e) => {
   clearTimeout(desenharPrevia.t);
   desenharPrevia.t = setTimeout(desenharPrevia, 400);
 });
-el('painel-senha').addEventListener('change', (e) => {
-  if (e.target.id === 'senha-ativa') void definirSenha(e.target.checked);
-});
 formEl.addEventListener('change', (e) => {
   if (e.target.dataset.opcao) opcoes[e.target.dataset.opcao] = e.target.checked;
   else if (e.target.dataset.ocultar) opcoes.ocultar[e.target.dataset.ocultar] = e.target.checked;
@@ -301,18 +254,6 @@ main.querySelector('[role=toolbar]').addEventListener('click', (e) => {
 });
 
 main.addEventListener('click', async (e) => {
-  if (e.target.closest('#nova-senha')) {
-    if (!(await confirmar({ titulo: 'Gerar nova senha', descricao: 'A senha atual deixa de funcionar. Envie a nova ao cliente.', rotuloConfirmar: 'Gerar nova senha' }))) return;
-    return void definirSenha(true, true);
-  }
-  if (e.target.closest('#copiar-senha')) {
-    try {
-      await navigator.clipboard.writeText(av.relatorio_senha);
-      return toast('Senha copiada.');
-    } catch {
-      return toast('Selecione a senha e copie manualmente.', 'erro');
-    }
-  }
   if (e.target.closest('#btn-ia')) return dialogoIA();
   if (e.target.closest('#btn-publicar')) return void publicar();
   if (e.target.closest('#btn-despublicar')) {
@@ -322,22 +263,6 @@ main.addEventListener('click', async (e) => {
     av.status = 'em_analise';
     desenharEstado();
     return toast('Relatório despublicado.');
-  }
-  if (e.target.closest('#copiar-relatorio')) {
-    try {
-      await navigator.clipboard.writeText(el('link-relatorio').value);
-      toast('Link copiado.');
-    } catch {
-      toast('Selecione o link e copie manualmente (Ctrl+C).', 'erro');
-    }
-  }
-  if (e.target.closest('#novo-link-relatorio')) {
-    if (!(await confirmar({ titulo: 'Gerar novo link', descricao: 'O link atual deixa de funcionar; envie o novo ao cliente.', rotuloConfirmar: 'Gerar novo link' }))) return;
-    const { data, error } = await supabase.rpc('regenerar_token', { p_avaliacao_id: av.id, p_qual: 'relatorio' });
-    if (error) return toast(mensagemDeErro(error), 'erro');
-    av.token_relatorio = data;
-    desenharEstado();
-    toast('Novo link gerado.');
   }
   const largo = e.target.closest('[data-largura]');
   if (largo) {
@@ -351,7 +276,7 @@ main.addEventListener('click', async (e) => {
 
 desenharForm();
 desenharPrevia();
-desenharSenha();
+const acesso = montarAcessoCliente(el('acesso-cliente'), av, empresa);
 desenharEstado();
 if (linha?.updated_at) el('estado-salvo').textContent = `Última edição em ${formatarData(linha.updated_at)}`;
 addEventListener('beforeunload', (e) => {

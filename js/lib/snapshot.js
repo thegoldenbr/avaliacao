@@ -42,6 +42,7 @@ export function montarSnapshot({ avaliacao, empresa, indicadores, faixas, anteri
       id: g.id,
       nome: g.nome,
       nomeCurto: g.nomeCurto,
+      peso: Math.round(g.pesoRelativo * 1000) / 10, // participação do tema na nota geral, em %
       nota: g.nota === null ? null : arredondar(g.nota),
       faixaId: classificar(g.nota, faixas)?.id ?? null,
       meta: op.mostrarMeta ? g.meta : null,

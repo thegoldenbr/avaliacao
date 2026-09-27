@@ -7,12 +7,15 @@
 <meta name="color-scheme" content="light dark">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://rbefxbmfyvoaiubpmfwg.supabase.co; font-src 'self'; connect-src 'self' https://rbefxbmfyvoaiubpmfwg.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="description" content="Radar de Desempenho: avaliações de desempenho empresarial com relatórios individuais.">
-<title>Relatório de desempenho — Radar de Desempenho</title>
+<title>Prévia do cliente — Radar de Desempenho</title>
 <script src="js/tema-cedo.js"></script>
 <link rel="preload" href="fonts/figtree-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="modulepreload" href="js/lib/mascaras.js">
-<link rel="modulepreload" href="js/lib/cnpj.js">
-<link rel="modulepreload" href="js/forms.js">
+<link rel="modulepreload" href="js/lib/snapshot.js">
+<link rel="modulepreload" href="js/lib/relatorio-ia.js">
+<link rel="modulepreload" href="js/pages/_snapshot-atual.js">
+<link rel="modulepreload" href="js/lib/faixas.js">
+<link rel="modulepreload" href="js/lib/indicadores.js">
+<link rel="modulepreload" href="js/pages/_avaliacao-indicadores.js">
 <link rel="modulepreload" href="js/ui.js">
 <link rel="modulepreload" href="js/lib/csv.js">
 <link rel="modulepreload" href="js/radar-export.js">
@@ -21,14 +24,16 @@
 <link rel="modulepreload" href="js/radar.js">
 <link rel="modulepreload" href="js/relatorio-vista.js">
 <link rel="modulepreload" href="js/relatorio-pagina.js">
+<link rel="modulepreload" href="js/auth.js">
 <link rel="modulepreload" href="js/lib/cor.js">
-<link rel="modulepreload" href="js/marca.js">
-<link rel="modulepreload" href="js/tema.js">
 <link rel="modulepreload" href="js/config.js">
 <link rel="modulepreload" href="js/supabase.js">
+<link rel="modulepreload" href="js/marca.js">
+<link rel="modulepreload" href="js/tema.js">
+<link rel="modulepreload" href="js/shell.js">
 <link rel="modulepreload" href="js/icones.js">
 <link rel="modulepreload" href="js/html.js">
-<link rel="modulepreload" href="js/pages/relatorio.js">
+<link rel="modulepreload" href="js/pages/previa-cliente.js">
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="css/app.css">
 </head>
@@ -38,6 +43,6 @@
   <noscript><p>Este sistema precisa de JavaScript ativado para funcionar.</p></noscript>
 </main>
 <script src="vendor/supabase.js"></script>
-<script type="module" src="js/pages/relatorio.js"></script>
+<script type="module" src="js/pages/previa-cliente.js"></script>
 </body>
 </html>

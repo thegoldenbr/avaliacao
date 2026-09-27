@@ -12,6 +12,7 @@ import { acoesPermitidas, fimDoDia, paraCampoData, prazoEncerrado, statusAoDesar
 import { ligarCopiar, painelCompartilhar } from './_avaliacao-compartilhar.js';
 import { montarAjustes, totalDePerguntas } from './_avaliacao-perguntas.js';
 import { montarIndicadores, statusTemIndicadores } from './_avaliacao-indicadores.js';
+import { montarAcessoCliente } from './_acesso-cliente.js';
 
 const { main } = await iniciarPagina({ ativo: 'avaliacoes' });
 const id = new URLSearchParams(location.search).get('id');
@@ -88,6 +89,7 @@ function desenhar() {
         <span class="badge ${TOM_STATUS[av.status] ?? ''}">${ROTULO_STATUS[av.status]}</span></div>
       ${linhaDoTempo()}
     </header>
+    ${statusTemIndicadores(av.status) ? html`<div id="acesso-cliente"></div>` : ''}
     ${av.status === 'rascunho'
       ? html`<ol class="passos" aria-label="Etapas"><li class="feito"><b>${icone('check', 'icone--sm')}</b>Empresa</li><li class="feito"><b>${icone('check', 'icone--sm')}</b>Questionário</li><li aria-current="step"><b>3</b>Perguntas</li><li><b>4</b>Prazo e mensagem</li><li><b>5</b>Link</li></ol>
         <section class="pilha" aria-labelledby="h-perg"><h2 id="h-perg">Perguntas desta avaliação</h2><div id="ajustes"></div></section>${painelSetup()}`
@@ -102,14 +104,20 @@ function desenhar() {
       : ''}
     ${['respondida', 'em_analise', 'publicada'].includes(av.status)
       ? html`<div class="pilha pilha--sm leitura"><h2>Respostas</h2><p>${total} perguntas respondidas${av.respondido_em ? ` em ${formatarDataHora(av.respondido_em)}` : ''}${av.respondente_nome ? ` por ${av.respondente_nome}${av.respondente_cargo ? `, ${av.respondente_cargo}` : ''}` : ''}.</p>
-        <div class="linha"><a class="btn" href="relatorio-editor.html?id=${av.id}">${icone('ia', 'icone--sm')}${av.status === 'publicada' ? 'Editar relatório publicado' : 'Análise e relatório'}</a></div>
+        <div class="linha">
+          <a class="btn" href="relatorio-editor.html?id=${av.id}">${icone('ia', 'icone--sm')}${av.status === 'publicada' ? 'Editar relatório publicado' : 'Análise e relatório'}</a>
+          <a class="btn btn--sec" href="previa-cliente.html?id=${av.id}">${icone('olho', 'icone--sm')}Ver como o cliente</a>
+          <a class="btn btn--sec" href="apresentacao.html?id=${av.id}">${icone('monitor', 'icone--sm')}Modo de apresentação</a></div>
         </div><div id="indicadores"></div>`
       : ''}
     ${painelAcoes()}
   </section>`);
   if (av.status === 'rascunho') montarAjustes(document.getElementById('ajustes'), av, () => document.getElementById('perguntas-erro') && (document.getElementById('perguntas-erro').hidden = true));
   if (av.status === 'aguardando_resposta') ligarCopiar(main);
-  if (statusTemIndicadores(av.status)) void montarIndicadores(document.getElementById('indicadores'), av);
+  if (statusTemIndicadores(av.status)) {
+    montarAcessoCliente(document.getElementById('acesso-cliente'), av, av.empresas);
+    void montarIndicadores(document.getElementById('indicadores'), av);
+  }
 }
 
 function dialogoData({ titulo, rotulo, inicial, rotuloConfirmar }) {

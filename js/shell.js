@@ -106,7 +106,7 @@ function montarShell({ ativo, perfil, main }) {
  * Prepara uma página da área interna. Devolve { main, perfil } quando o acesso está liberado;
  * caso contrário redireciona ou mostra o aviso e nunca resolve (a página para ali).
  */
-export async function iniciarPagina({ ativo, admin = false }) {
+export async function iniciarPagina({ ativo, admin = false, semShell = false }) {
   aplicarTema();
   const main = document.querySelector('main');
   const [sessao] = await Promise.all([sessaoAtual(), carregarMarca()]);
@@ -142,8 +142,7 @@ export async function iniciarPagina({ ativo, admin = false }) {
     montarShell({ ativo, perfil, main });
     return nuncaResolve();
   }
-  montarShell({ ativo, perfil, main });
-  document.title = document.title.replace(/^.*?—/, (m) => m);
+  if (!semShell) montarShell({ ativo, perfil, main });
   return { main, perfil };
 }
 
