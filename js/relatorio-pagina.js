@@ -4,7 +4,7 @@
  */
 import { html } from './html.js';
 import { icone } from './icones.js';
-import { renderRelatorio } from './relatorio-vista.js';
+import { renderRelatorio, ativarRelatorio } from './relatorio-vista.js';
 import { baixarDataUrl, svgParaPng } from './radar-export.js';
 import { nomeDeArquivo } from './lib/csv.js';
 import { toast } from './ui.js';
@@ -33,6 +33,7 @@ export function montarPaginaDoRelatorio(raiz, { snapshot, marca, rodape, aviso =
     <header>${cabecalhoDaMarca(marca, html`<div class="linha"><button class="btn btn--sec btn--sm" id="btn-png">${icone('imagem', 'icone--sm')}Radar (PNG)</button><button class="btn btn--sec btn--sm" id="btn-pdf">${icone('baixar', 'icone--sm')}Baixar PDF</button></div>`)}</header>
     ${corpo}
     <footer class="muted"><hr class="divisor" style="margin-bottom:1rem">${rodape ?? ''}</footer></div>`);
+  ativarRelatorio();
 
   const nomeBase = nomeDeArquivo(`${snapshot.empresa}-${snapshot.titulo}`);
   raiz.querySelector('#btn-pdf').addEventListener('click', async (e) => {

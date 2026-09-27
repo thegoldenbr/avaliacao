@@ -4,7 +4,7 @@ import { icone } from '../icones.js';
 import { iniciarPagina } from '../shell.js';
 import { supabase, dados } from '../supabase.js';
 import { abrirDialogo, confirmar, toast } from '../ui.js';
-import { renderRelatorio } from '../relatorio-vista.js';
+import { renderRelatorio, ativarRelatorio, estadoAbas } from '../relatorio-vista.js';
 import { mensagemDeErro } from '../lib/erros.js';
 import { formatarData } from '../lib/formatacao.js';
 import { relatorioEmBranco } from '../lib/relatorio-ia.js';
@@ -87,7 +87,8 @@ function desenharPrevia() {
   caixa.className = `moldura ${largura === 'celular' ? '' : ''}`;
   caixa.style.maxWidth = largura === 'celular' ? '390px' : '';
   caixa.style.marginInline = largura === 'celular' ? 'auto' : '';
-  caixa.innerHTML = String(renderRelatorio(s));
+  caixa.innerHTML = String(renderRelatorio(s, estadoAbas(caixa)));
+  ativarRelatorio();
 }
 
 function desenharEstado() {
