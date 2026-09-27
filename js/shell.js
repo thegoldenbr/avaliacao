@@ -63,7 +63,7 @@ function montarShell({ ativo, perfil, main }) {
     <aside class="lateral">
       <div class="topo-lateral">
         ${logoMarca(undefined, true)}
-        <button type="button" class="btn btn--ghost btn--icone" data-lateral-alternar aria-label="Recolher ou expandir o menu" aria-expanded="${!recolhida}">${icone('painel')}</button>
+        <button type="button" class="btn btn--ghost btn--icone" data-lateral-alternar aria-label="Recolher ou expandir o menu" aria-expanded="${String(!recolhida)}">${icone('painel')}</button>
       </div>
       <nav aria-label="Principal">${lateral.map((i) => itemNav(i, ativo, true))}</nav>
       <div class="rodape-lateral">

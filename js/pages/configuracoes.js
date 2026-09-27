@@ -11,7 +11,7 @@ let config = null;
 
 main.innerHTML = String(html`<section class="pilha pilha--lg">
   <header><h1>Configurações</h1><p class="muted">Visíveis apenas para administradores.</p></header>
-  <div class="abas" role="tablist" aria-label="Seções">${ABAS.map(([id, rotulo], i) => html`<button type="button" role="tab" id="aba-${id}" data-aba="${id}" aria-selected="${i === 0}" aria-controls="painel">${rotulo}</button>`)}</div>
+  <div class="abas" role="tablist" aria-label="Seções">${ABAS.map(([id, rotulo], i) => html`<button type="button" role="tab" id="aba-${id}" data-aba="${id}" aria-selected="${String(i === 0)}" aria-controls="painel">${rotulo}</button>`)}</div>
   <div id="painel" role="tabpanel"></div>
 </section>`);
 

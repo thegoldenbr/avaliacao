@@ -9,12 +9,14 @@
     "sql:tudo": "node scripts/gerar-sql.mjs",
     "vendor": "node scripts/vendor.mjs",
     "paginas": "node scripts/gerar-paginas.mjs",
-    "compartilhar": "node scripts/compartilhar.mjs"
+    "compartilhar": "node scripts/compartilhar.mjs",
+    "servir": "node scripts/servir.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
     "@fontsource/figtree": "^5.3.0",
     "@supabase/supabase-js": "^2.117.2",
+    "axe-core": "^4.13.0",
     "jspdf": "^4.2.1",
     "qrcode-generator": "^2.0.4",
     "sortablejs": "^1.15.7"

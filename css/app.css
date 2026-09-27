@@ -154,7 +154,7 @@ button, input, select, textarea { font: inherit; color: inherit; touch-action: m
 .faixa--atencao { --cor-faixa: var(--faixa-atencao); }
 .faixa--bom { --cor-faixa: var(--faixa-bom); }
 .faixa--excelente { --cor-faixa: var(--faixa-excelente); }
-.faixa-fundo { background: color-mix(in srgb, var(--cor-faixa) 14%, var(--color-surface)); padding: .125rem .625rem; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--cor-faixa) 50%, transparent); }
+.faixa-fundo { background: color-mix(in srgb, var(--cor-faixa) 7%, var(--color-surface)); padding: .125rem .625rem; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--cor-faixa) 50%, transparent); }
 
 /* Nota em destaque */
 .nota-destaque { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
@@ -451,3 +451,5 @@ summary.mais { display: flex; align-items: center; min-height: 44px; cursor: poi
 .qr svg { width: 100%; height: 100%; display: block; }
 .link-copia { display: flex; gap: .5rem; }
 .link-copia .input { font-size: .875rem; }
+
+.chip[aria-checked="true"] { background: var(--color-primary-soft); border-color: var(--color-primary); color: var(--color-text); font-weight: 600; }

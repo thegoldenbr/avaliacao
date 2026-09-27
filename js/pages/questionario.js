@@ -86,7 +86,7 @@ function htmlGrupo(g, i) {
         <button type="button" class="btn btn--ghost btn--icone" data-acao="grupo-subir" data-id="${g.id}" aria-label="Subir o grupo">${icone('sobe')}</button>
         <button type="button" class="btn btn--ghost btn--icone" data-acao="grupo-descer" data-id="${g.id}" aria-label="Descer o grupo">${icone('desce')}</button>
         <button type="button" class="btn btn--ghost btn--icone" data-acao="grupo-excluir" data-id="${g.id}" aria-label="Remover o grupo">${icone('lixo')}</button>
-        <button type="button" class="btn btn--ghost btn--icone" data-acao="grupo-recolher" data-id="${g.id}" aria-expanded="${aberto}" aria-label="${aberto ? 'Recolher perguntas' : 'Mostrar perguntas'}">${icone('baixo', 'rotacao')}</button>
+        <button type="button" class="btn btn--ghost btn--icone" data-acao="grupo-recolher" data-id="${g.id}" aria-expanded="${String(aberto)}" aria-label="${aberto ? 'Recolher perguntas' : 'Mostrar perguntas'}">${icone('baixo', 'rotacao')}</button>
       </div>
     </header>
     <div class="corpo-grupo" ${aberto ? '' : html`hidden`}>

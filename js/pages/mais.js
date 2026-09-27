@@ -14,7 +14,7 @@ function desenhar() {
     <div class="pilha pilha--sm" role="radiogroup" aria-label="Tema">
       <h2>Aparência</h2>
       <div class="linha" style="flex-wrap:nowrap">
-        ${TEMAS.map(([id, rotulo]) => html`<button type="button" class="chip" style="flex:1;justify-content:center" role="radio" aria-checked="${escolhaAtual() === id}" aria-pressed="${escolhaAtual() === id}" data-tema="${id}">${rotulo}</button>`)}
+        ${TEMAS.map(([id, rotulo]) => html`<button type="button" class="chip" style="flex:1;justify-content:center" role="radio" aria-checked="${String(escolhaAtual() === id)}" data-tema="${id}">${rotulo}</button>`)}
       </div>
     </div>
     <div class="pilha pilha--sm" style="align-items:flex-start">

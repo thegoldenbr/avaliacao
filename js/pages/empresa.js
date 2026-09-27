@@ -23,7 +23,7 @@ if (error || !e) {
 }
 
 const nome = e.nome_fantasia ?? e.razao_social;
-const dado = (rotulo, valor) => html`<div><dt>${rotulo}</dt><dd>${valor || '—'}</dd></div>`;
+const dado = (rotulo, valor, estilo = '') => html`<div style="${estilo}"><dt>${rotulo}</dt><dd>${valor || '—'}</dd></div>`;
 
 main.innerHTML = String(html`<section class="pilha pilha--lg">
   <header class="pilha">
@@ -37,7 +37,7 @@ main.innerHTML = String(html`<section class="pilha pilha--lg">
     ${dado('Segmento', e.segmento)}${dado('Porte', e.porte)}${dado('Local', e.municipio ? `${e.municipio}/${e.uf ?? ''}` : e.uf)}
     ${dado('Responsável', e.responsavel_nome)}${dado('Cargo', e.responsavel_cargo)}${dado('E-mail', e.responsavel_email)}
     ${dado('Telefone', e.responsavel_telefone ? mascararTelefone(e.responsavel_telefone) : '')}
-    <div style="grid-column: span 2">${dado('Observações', e.observacoes)}</div>
+    ${dado('Observações', e.observacoes, 'grid-column: span 2')}
   </dl>
   <section aria-labelledby="hist"><h2 id="hist" style="margin-bottom:.75rem">Avaliações</h2>
     ${!avaliacoes || avaliacoes.length === 0

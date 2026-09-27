@@ -1,6 +1,35 @@
 // Gera as páginas HTML do app a partir de uma tabela (evita repetir o cabeçalho em cada arquivo).
 // Rode: npm run paginas. As páginas geradas são versionadas; o site não precisa de build.
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
+
+// A CSP usa a URL do Supabase de js/config.js (única fonte).
+const SUPABASE = /SUPABASE_URL\s*=\s*'([^']+)'/.exec(readFileSync(new URL('../js/config.js', import.meta.url), 'utf8'))?.[1];
+if (!SUPABASE) throw new Error('SUPABASE_URL não encontrada em js/config.js');
+// Content-Security-Policy por <meta> (o GitHub Pages não permite cabeçalhos). Só o próprio site e o Supabase.
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  `img-src 'self' data: blob: ${SUPABASE}`,
+  "font-src 'self'",
+  `connect-src 'self' ${SUPABASE}`,
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join('; ');
+
+// Cascata de módulos ES: descobre os imports estáticos de cada página e pré-carrega todos em paralelo (modulepreload).
+function importsEstaticos(arquivo, visto = new Set()) {
+  if (visto.has(arquivo)) return visto;
+  visto.add(arquivo);
+  const texto = readFileSync(new URL(`../${arquivo}`, import.meta.url), 'utf8');
+  for (const m of texto.matchAll(/^\s*(?:import|export)\s[^'"]*?from\s+'(\.{1,2}\/[^']+)'/gm)) {
+    const alvo = new URL(m[1], new URL(`../${arquivo}`, import.meta.url));
+    const rel = alvo.pathname.slice(new URL('../', import.meta.url).pathname.length);
+    importsEstaticos(rel, visto);
+  }
+  return visto;
+}
 
 const PAGINAS = [
   { arquivo: 'index.html', titulo: 'Início', js: 'inicio' },
@@ -31,8 +60,12 @@ const pagina = ({ titulo, js, sortable, qr }) => `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="${CSP}">
+<meta name="description" content="Radar de Desempenho: avaliações de desempenho empresarial com relatórios individuais.">
 <title>${titulo} — Radar de Desempenho</title>
 <script src="js/tema-cedo.js"></script>
+<link rel="preload" href="fonts/figtree-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+${[...importsEstaticos(`js/pages/${js}.js`)].reverse().map((m) => `<link rel="modulepreload" href="${m}">`).join('\n')}
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="css/app.css">
 </head>

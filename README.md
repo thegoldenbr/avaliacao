@@ -11,17 +11,18 @@ Sistema para uma empresa avaliadora medir o desempenho de outras empresas com qu
 - **Segurança de HTML:** as telas são montadas com o template `html```(`js/html.js`), que escapa tudo que vem do banco (proteção contra XSS).
 - **Design:** [PROJECT_STYLE.md](PROJECT_STYLE.md), [docs/design-system.md](docs/design-system.md) e `css/app.css`. Mockups da Fase 0 em `mockups/` (publicados em `/mockups/`).
 
-> Status: Fases 0 a 6 concluídas em HTML puro (design, base, cadastros, avaliações, formulário público, indicadores, editor de relatório com IA, dashboard do cliente e exportações). Próxima: Fase 7 (acabamento).
+> Status: Todas as fases (0 a 7) concluídas em HTML puro. Veja [docs/arquitetura.md](docs/arquitetura.md) para o mapa do código e a segurança.
 
 ## Desenvolvimento local
 
 ```bash
 npm install                 # só para testes e para recopiar vendor/
-python -m http.server 5173  # ou qualquer servidor estático; abra http://localhost:5173/
+npm run servir              # servidor estático com compressão; abra http://localhost:5173/ (ou qualquer servidor estático)
 ```
 
 | Comando | O que faz |
 |---|---|
+| `npm run servir [porta]` | Servidor estático local com Brotli/gzip, parecido com o GitHub Pages |
 | `npm test` | Testes unitários das bibliotecas (`node --test`): CNPJ, máscaras, pesos, faixas, cor, escape de HTML |
 | `npm run test:banco` | Testa migrations, RLS e RPCs num Postgres em memória (PGlite), sem Docker e sem tocar no Supabase |
 | `npm run paginas` | Regenera os `.html` a partir de `scripts/gerar-paginas.mjs` |
@@ -52,3 +53,11 @@ Por CLI (já usado neste projeto): `npx supabase login` (terminal interativo), `
 - Usuários internos ativos acessam os dados operacionais; configurações, perfis e exclusão de empresa são só do administrador.
 - A cópia (snapshot) das perguntas de uma avaliação congela após o envio; editar o modelo não altera avaliações existentes.
 - `npm run test:banco` verifica esses pontos, inclusive que `anon` só executa as 4 RPCs públicas.
+
+## Qualidade verificada
+
+- **Testes:** `npm test` (36 testes das regras puras, incluindo o caso obrigatório da especificação) e `npm run test:banco` (RLS, RPCs, snapshot, cascata) passam a cada push (workflow de deploy).
+- **Acessibilidade:** auditoria automática com axe-core (WCAG 2.1 A e AA) em todas as 19 telas, nos temas claro e escuro, em 390 px e 1280 px: **0 violações**. Sem rolagem horizontal em 320, 360 e 768 px.
+- **Lighthouse (mobile, páginas públicas):** desempenho 94, acessibilidade 100, boas práticas 100 (o SEO é menor de propósito: o site é `noindex`).
+- **Segurança:** CSP por `<meta>`, sem segredo no front, RLS/RPC no banco e escape de HTML em toda interpolação (ver [docs/arquitetura.md](docs/arquitetura.md)).
+- **Limite da verificação:** as telas da área interna foram exercitadas com um cliente Supabase simulado, sem criar contas no seu projeto. O primeiro teste ponta a ponta com login real é seu; se algo falhar, anote a tela e a mensagem.

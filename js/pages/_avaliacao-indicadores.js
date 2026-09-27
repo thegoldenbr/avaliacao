@@ -136,9 +136,9 @@ export async function montarIndicadores(raiz, av) {
       </div>
       <div><div id="area-radar"></div>
         <div class="chips" style="justify-content:center;margin-top:.5rem" role="group" aria-label="Séries do radar">
-          <button class="chip" data-serie="anterior" aria-pressed="${escolhas.anterior}" ${anterior ? '' : html`disabled title="Sem avaliação anterior do mesmo modelo"`}>Anterior</button>
-          <button class="chip" data-serie="meta" aria-pressed="${escolhas.meta}" ${escolhas.meta ? '' : html`disabled title="Nenhum grupo tem meta"`}>Meta</button>
-          <button class="chip" data-serie="media" aria-pressed="${escolhas.media}" ${media ? '' : html`disabled title="A média só aparece com pelo menos ${MINIMO_PARA_MEDIA} outras avaliações do mesmo modelo"`}>${media ? 'Média das empresas' : `Média (mín. ${MINIMO_PARA_MEDIA} avaliações)`}</button>
+          <button class="chip" data-serie="anterior" aria-pressed="${String(escolhas.anterior)}" ${anterior ? '' : html`disabled title="Sem avaliação anterior do mesmo modelo"`}>Anterior</button>
+          <button class="chip" data-serie="meta" aria-pressed="${String(escolhas.meta)}" ${escolhas.meta ? '' : html`disabled title="Nenhum grupo tem meta"`}>Meta</button>
+          <button class="chip" data-serie="media" aria-pressed="${String(escolhas.media)}" ${media ? '' : html`disabled title="A média só aparece com pelo menos ${MINIMO_PARA_MEDIA} outras avaliações do mesmo modelo"`}>${media ? 'Média das empresas' : `Média (mín. ${MINIMO_PARA_MEDIA} avaliações)`}</button>
         </div></div>
     </section>
 

@@ -22,9 +22,9 @@ function legenda(series) {
 }
 
 function tabelaParaLeitores(rotulos, series) {
-  return html`<table class="sr-only"><caption>Notas por grupo (escala de 0 a 10)</caption>
+  return html`<div class="sr-only"><table><caption>Notas por grupo (escala de 0 a 10)</caption>
     <thead><tr><th>Grupo</th>${series.map((s) => html`<th>${s.nome}</th>`)}</tr></thead>
-    <tbody>${rotulos.map((r, i) => html`<tr><th>${r}</th>${series.map((s) => html`<td>${s.valores[i] == null ? 'sem dado' : formatarNota(s.valores[i])}</td>`)}</tr>`)}</tbody></table>`;
+    <tbody>${rotulos.map((r, i) => html`<tr><th>${r}</th>${series.map((s) => html`<td>${s.valores[i] == null ? 'sem dado' : formatarNota(s.valores[i])}</td>`)}</tr>`)}</tbody></table></div>`;
 }
 
 function barras(rotulos, series) {
