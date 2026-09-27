@@ -17,6 +17,28 @@ export function paraCampoData(valor) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+/** Date/ISO → "aaaa-mm-ddThh:mm" no fuso do navegador (para preencher <input type="datetime-local">). */
+export function paraCampoDataHora(valor) {
+  if (!valor) return '';
+  const d = new Date(valor);
+  const p = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+/** "aaaa-mm-ddThh:mm" (do <input type="datetime-local">, sempre no fuso do navegador) → ISO em UTC. Vazio/inválido → null. */
+export function deCampoDataHora(valor) {
+  if (!valor) return null;
+  const d = new Date(valor);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+/** Nome do fuso do navegador com o deslocamento (ex.: "America/Sao_Paulo, GMT-3"), para deixar claro em que horário um agendamento vale. */
+export function rotuloFuso(data = new Date()) {
+  const zona = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const deslocamento = new Intl.DateTimeFormat('pt-BR', { timeZoneName: 'shortOffset' }).formatToParts(data).find((p) => p.type === 'timeZoneName')?.value ?? '';
+  return `${zona}, ${deslocamento}`;
+}
+
 /** O prazo já passou? Sem prazo, nunca encerra. */
 export function prazoEncerrado(prazo, agora = new Date()) {
   return Boolean(prazo) && new Date(prazo) < agora;

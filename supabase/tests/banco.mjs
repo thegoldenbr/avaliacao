@@ -249,5 +249,31 @@ await q(`select public.liberar_relatorio($1,false) t`, [avPub]);
 ok((await q(`select apresentacao_liberada_em from public.avaliacoes where id=$1`, [avPub]))[0].apresentacao_liberada_em === null, 'revogar o dashboard revoga a apresentação junto');
 await db.exec(`reset role`);
 
+// Liberação programada (opcional): agenda uma data/hora e a ativação acontece sozinha no primeiro acesso depois dela.
+// Aqui, avPub está sem liberação (revogada acima) e já com apresentacao_realizada_em setado.
+await como(admin);
+await q(`select public.agendar_relatorio($1, now() + interval '1 hour') t`, [avPub]);
+await db.exec(`reset role`); await db.exec(`set role anon`);
+ok((await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r.liberado === false, 'agendado para o futuro, o link continua travado até a hora chegar');
+await como(admin);
+ok((await q(`select public.agendar_apresentacao($1, now() + interval '1 hour') t`, [avPub]))[0].t !== null, 'também dá para agendar o modo de apresentação');
+await q(`select public.agendar_relatorio($1, now() - interval '1 minute') t`, [avPub]);
+await q(`select public.agendar_apresentacao($1, now() - interval '1 minute') t`, [avPub]);
+await db.exec(`reset role`); await db.exec(`set role anon`);
+const rAg = (await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r;
+ok(rAg.disponivel === true && rAg.apresentacao_liberada === true, 'passada a hora agendada, o primeiro acesso libera dashboard e apresentação sozinho');
+await como(admin);
+const linhaAg = (await q(`select relatorio_liberado_em, relatorio_agendado_para, apresentacao_liberada_em, apresentacao_agendado_para from public.avaliacoes where id=$1`, [avPub]))[0];
+ok(linhaAg.relatorio_liberado_em !== null && linhaAg.relatorio_agendado_para === null && linhaAg.apresentacao_liberada_em !== null && linhaAg.apresentacao_agendado_para === null, 'os agendamentos somem depois de efetivados');
+ok((await q(`select public.liberar_relatorio($1,false) t`, [avPub]))[0].t === null, 'revoga tudo de novo para o próximo teste');
+await q(`select public.agendar_relatorio($1, now() + interval '2 hours') t`, [avPub]);
+ok((await q(`select * from public.efetivar_agendamentos($1)`, [avPub]))[0].out_relatorio_liberado_em === null, 'efetivar_agendamentos não antecipa um agendamento que ainda não chegou');
+await q(`select public.agendar_relatorio($1, now() - interval '2 hours') t`, [avPub]);
+ok((await q(`select * from public.efetivar_agendamentos($1)`, [avPub]))[0].out_relatorio_liberado_em !== null, 'efetivar_agendamentos ativa um agendamento vencido (usado ao reabrir a avaliação, sem depender do cliente acessar)');
+let agErro = null;
+try { await q(`select public.agendar_relatorio($1, now() + interval '1 hour') t`, [avPub]); } catch (e) { agErro = e; }
+ok(agErro?.message?.includes('avaliacao_nao_agendavel'), 'não dá para agendar de novo depois de já liberado');
+await db.exec(`reset role`);
+
 console.log(falhas ? `\n${falhas} falha(s)` : '\ntodos os testes passaram');
 process.exit(falhas ? 1 : 0);

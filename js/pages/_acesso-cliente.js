@@ -8,7 +8,7 @@ import { qrSvg } from '../qr.js';
 import { supabase, urlDaPagina } from '../supabase.js';
 import { confirmar, toast } from '../ui.js';
 import { formatarData, formatarDataHora } from '../lib/formatacao.js';
-import { linkEmail, linkWhatsApp } from '../lib/avaliacao.js';
+import { deCampoDataHora, linkEmail, linkWhatsApp, paraCampoDataHora, rotuloFuso } from '../lib/avaliacao.js';
 import { mensagemDeErro } from '../lib/erros.js';
 
 export const linkDoRelatorio = (token) => `${urlDaPagina('relatorio.html')}#${token}`;
@@ -22,11 +22,30 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
   const nome = empresa.nome_fantasia ?? empresa.razao_social;
   const publicada = () => av.status === 'publicada';
 
+  /** Bloco opcional "ou agende para depois", só aparece onde a liberação imediata também é possível. */
+  const agendamento = (tipo) => {
+    const quando = tipo === 'relatorio' ? av.relatorio_agendado_para : av.apresentacao_agendado_para;
+    if (quando) {
+      return html`<div class="aviso aviso--info" role="status">${icone('relogio')}<div class="pilha pilha--sm"><p>Agendado para liberar sozinho em <b>${formatarDataHora(quando)}</b> (${rotuloFuso()}).</p>
+        <div><button class="btn btn--sec btn--sm" data-agendamento="cancelar" data-tipo="${tipo}">${icone('x', 'icone--sm')}Cancelar agendamento</button></div></div></div>`;
+    }
+    return html`<details class="bloco"><summary><span class="muted">Ou agende para uma data e hora</span><span class="sc">${icone('baixo', 'chev')}</span></summary>
+      <div class="corpo">
+        <div class="linha" style="align-items:flex-end">
+          <div class="campo"><label for="agendar-${tipo}">Data e hora</label><input class="input" type="datetime-local" id="agendar-${tipo}" min="${paraCampoDataHora(new Date())}"></div>
+          <button class="btn btn--sec btn--sm" type="button" data-agendamento="marcar" data-tipo="${tipo}">${icone('relogio', 'icone--sm')}Agendar</button>
+        </div>
+        <p class="muted" style="font-size:.8125rem">Fuso: ${rotuloFuso()}. A liberação acontece sozinha assim que alguém acessar depois desse horário — não precisa deixar nada aberto.</p>
+      </div>
+    </details>`;
+  };
+
   const liberacao = () => av.relatorio_liberado_em
     ? html`<div class="aviso aviso--ok" role="status">${icone('ok')}<div class="pilha pilha--sm"><p><b>Liberado para o cliente</b> desde ${formatarDataHora(av.relatorio_liberado_em)}. Quem tiver o link${av.relatorio_senha ? ' e o PIN' : ''} consegue ver o dashboard.</p>
         <div><button class="btn btn--sec btn--sm" data-acesso="revogar">${icone('cadeado', 'icone--sm')}Revogar acesso do cliente</button></div></div></div>`
     : html`<div class="aviso aviso--atencao" role="status">${icone('aviso')}<div class="pilha pilha--sm"><p><b>Travado para o cliente.</b> Quem abrir o link vê apenas um aviso de que o relatório ainda não foi liberado. Libere depois de apresentar o resultado.</p>
-        <div><button class="btn btn--sm" data-acesso="liberar">${icone('ok', 'icone--sm')}Liberar para o cliente</button></div></div></div>`;
+        <div><button class="btn btn--sm" data-acesso="liberar">${icone('ok', 'icone--sm')}Liberar para o cliente</button></div>
+        ${agendamento('relatorio')}</div></div>`;
 
   const liberacaoApresentacao = () => {
     if (!av.relatorio_liberado_em) {
@@ -39,7 +58,8 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
       ? html`<div class="aviso aviso--ok" role="status">${icone('ok')}<div class="pilha pilha--sm"><p><b>Modo de apresentação liberado</b> desde ${formatarDataHora(av.apresentacao_liberada_em)}. O cliente vê o botão "Modo de apresentação" no dashboard dele.</p>
           <div><button class="btn btn--sec btn--sm" data-acesso="revogar-apresentacao">${icone('cadeado', 'icone--sm')}Revogar modo de apresentação</button></div></div></div>`
       : html`<div class="aviso aviso--atencao" role="status">${icone('aviso')}<div class="pilha pilha--sm"><p>O cliente ainda não vê o botão de modo de apresentação no dashboard dele.</p>
-          <div><button class="btn btn--sec btn--sm" data-acesso="liberar-apresentacao">${icone('monitor', 'icone--sm')}Liberar modo de apresentação para o cliente</button></div></div></div>`;
+          <div><button class="btn btn--sec btn--sm" data-acesso="liberar-apresentacao">${icone('monitor', 'icone--sm')}Liberar modo de apresentação para o cliente</button></div>
+          ${agendamento('apresentacao')}</div></div>`;
   };
 
   function desenhar() {
@@ -87,6 +107,39 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
     toast(liberarAgora ? 'Relatório liberado para o cliente.' : 'Acesso do cliente revogado: o link voltou a ficar travado.');
   }
 
+  const ROTULO_TIPO = { relatorio: 'do dashboard', apresentacao: 'do modo de apresentação' };
+
+  async function agendar(tipo, quandoIso) {
+    const fn = tipo === 'relatorio' ? 'agendar_relatorio' : 'agendar_apresentacao';
+    const { data, error } = await supabase.rpc(fn, { p_avaliacao_id: av.id, p_quando: quandoIso });
+    if (error) return toast(mensagemDeErro(error, 'Não foi possível agendar.'), 'erro');
+    if (tipo === 'relatorio') av.relatorio_agendado_para = data;
+    else av.apresentacao_agendado_para = data;
+    desenhar();
+    aoAlterar?.();
+    toast(quandoIso ? `Liberação ${ROTULO_TIPO[tipo]} agendada para ${formatarDataHora(quandoIso)}.` : 'Agendamento cancelado.');
+  }
+
+  /** Ao reabrir a avaliação, efetiva na hora um agendamento já vencido, sem depender do cliente ter acessado o link. */
+  async function efetivarAgendamentosVencidos() {
+    if (!av.relatorio_agendado_para && !av.apresentacao_agendado_para) return;
+    const { data, error } = await supabase.rpc('efetivar_agendamentos', { p_avaliacao_id: av.id });
+    if (error || !data?.[0]) return;
+    const linha = data[0];
+    const mudou = (linha.out_relatorio_liberado_em && !av.relatorio_liberado_em) || (linha.out_apresentacao_liberada_em && !av.apresentacao_liberada_em);
+    if (!mudou) return;
+    if (linha.out_relatorio_liberado_em) {
+      av.relatorio_liberado_em = linha.out_relatorio_liberado_em;
+      av.relatorio_agendado_para = null;
+    }
+    if (linha.out_apresentacao_liberada_em) {
+      av.apresentacao_liberada_em = linha.out_apresentacao_liberada_em;
+      av.apresentacao_agendado_para = null;
+    }
+    desenhar();
+    aoAlterar?.();
+  }
+
   async function liberarApresentacao(liberarAgora) {
     const { data, error } = await supabase.rpc('liberar_apresentacao_cliente', { p_avaliacao_id: av.id, p_liberar: liberarAgora });
     if (error) return toast(mensagemDeErro(error, 'Não foi possível alterar o modo de apresentação.'), 'erro');
@@ -121,6 +174,22 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
     if (e.target.id === 'pin-ativo') void definirPin(e.target.checked);
   });
   raiz.addEventListener('click', async (e) => {
+    const ag = e.target.closest('[data-agendamento]');
+    if (ag) {
+      const tipo = ag.dataset.tipo;
+      if (ag.dataset.agendamento === 'marcar') {
+        const campo = raiz.querySelector(`#agendar-${tipo}`);
+        const iso = deCampoDataHora(campo?.value);
+        if (!iso) return toast('Escolha uma data e hora.', 'erro');
+        if (new Date(iso).getTime() <= Date.now()) return toast('Escolha um horário no futuro.', 'erro');
+        return agendar(tipo, iso);
+      }
+      if (ag.dataset.agendamento === 'cancelar') {
+        if (!(await confirmar({ titulo: 'Cancelar agendamento', descricao: 'O agendamento é removido; a liberação deixa de acontecer sozinha. Você pode agendar de novo ou liberar na hora.', rotuloConfirmar: 'Cancelar agendamento', perigo: false }))) return;
+        return agendar(tipo, null);
+      }
+      return;
+    }
     const b = e.target.closest('[data-acesso]');
     if (!b) return;
     const acao = b.dataset.acesso;
@@ -158,5 +227,6 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
   });
 
   desenhar();
+  void efetivarAgendamentosVencidos();
   return { atualizar: desenhar };
 }

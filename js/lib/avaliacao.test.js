@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { acoesPermitidas, fimDoDia, linkEmail, linkWhatsApp, minutosEstimados, paraCampoData, prazoEncerrado, telefoneParaWhatsApp, tituloDaNovaRodada, validarEnvio } from './avaliacao.js';
+import { acoesPermitidas, deCampoDataHora, fimDoDia, linkEmail, linkWhatsApp, minutosEstimados, paraCampoData, paraCampoDataHora, prazoEncerrado, rotuloFuso, telefoneParaWhatsApp, tituloDaNovaRodada, validarEnvio } from './avaliacao.js';
 
 test('fim do dia escolhido, no fuso do navegador', () => {
   const d = fimDoDia('2026-10-09');
@@ -11,6 +11,16 @@ test('fim do dia escolhido, no fuso do navegador', () => {
   assert.equal(fimDoDia('09/10/2026'), null);
   assert.equal(paraCampoData(fimDoDia('2026-10-09')), '2026-10-09');
   assert.equal(paraCampoData(null), '');
+});
+
+test('agendamento: ida e volta entre <input type="datetime-local"> e ISO', () => {
+  assert.equal(paraCampoDataHora(null), '');
+  const campo = paraCampoDataHora('2026-10-09T14:30:00Z');
+  assert.match(campo, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
+  assert.equal(deCampoDataHora(campo), new Date(campo).toISOString());
+  assert.equal(deCampoDataHora(''), null);
+  assert.equal(deCampoDataHora('data-invalida'), null);
+  assert.match(rotuloFuso(), /^.+, GMT/);
 });
 
 test('prazo encerrado', () => {
