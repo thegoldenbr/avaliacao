@@ -5,6 +5,7 @@ import { supabase } from '../supabase.js';
 import { aplicarTema } from '../tema.js';
 import { aplicarCor } from '../marca.js';
 import { cabecalhoDaMarca, montarPaginaDoRelatorio, snapshotValido } from '../relatorio-pagina.js';
+import { montarApresentacao } from '../apresentacao-vista.js';
 import { campo, mostrarErros } from '../forms.js';
 
 aplicarTema();
@@ -82,7 +83,34 @@ async function carregar(pinDigitado = null) {
   }
   const snapshot = { ...data.conteudo, publicado_em: data.publicado_em ?? data.conteudo.publicado_em };
   document.title = `${data.empresa} — Relatório de desempenho`;
-  montarPaginaDoRelatorio(raiz, { snapshot, marca: data.marca, rodape: data.rodape });
+  montarRelatorio({ snapshot, marca: data.marca, rodape: data.rodape, apresentacaoLiberada: Boolean(data.apresentacao_liberada) });
+}
+
+/** Mostra o dashboard, com o botão "Modo de apresentação" quando o operador liberou esse modo ao cliente. */
+function montarRelatorio(ctx) {
+  let desmontarApresentacao = null;
+  const abrirApresentacao = () => {
+    desmontarApresentacao = montarApresentacao(raiz, {
+      snapshot: ctx.snapshot,
+      marca: ctx.marca,
+      rodape: ctx.rodape,
+      sair: () => {
+        desmontarApresentacao?.();
+        desmontarApresentacao = null;
+        montarPagina();
+      },
+    });
+  };
+  function montarPagina() {
+    montarPaginaDoRelatorio(raiz, {
+      snapshot: ctx.snapshot,
+      marca: ctx.marca,
+      rodape: ctx.rodape,
+      acoesExtra: ctx.apresentacaoLiberada ? html`<button type="button" class="btn btn--sec btn--sm" id="btn-apresentacao">${icone('monitor', 'icone--sm')}Modo de apresentação</button>` : '',
+    });
+    raiz.querySelector('#btn-apresentacao')?.addEventListener('click', abrirApresentacao);
+  }
+  montarPagina();
 }
 
 addEventListener('hashchange', () => location.reload());

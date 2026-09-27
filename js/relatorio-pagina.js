@@ -20,7 +20,7 @@ export function cabecalhoDaMarca(marca, acoes = '') {
 }
 
 /** Desenha o relatório em `raiz`. `aviso` (HTML seguro) aparece no topo, útil para a prévia interna. */
-export function montarPaginaDoRelatorio(raiz, { snapshot, marca, rodape, aviso = '' }) {
+export function montarPaginaDoRelatorio(raiz, { snapshot, marca, rodape, aviso = '', acoesExtra = '' }) {
   let corpo;
   try {
     corpo = renderRelatorio(snapshot, { animar: true });
@@ -30,7 +30,7 @@ export function montarPaginaDoRelatorio(raiz, { snapshot, marca, rodape, aviso =
   }
   raiz.innerHTML = String(html`<div class="rel">
     ${aviso}
-    <header>${cabecalhoDaMarca(marca, html`<div class="linha"><button class="btn btn--sec btn--sm" id="btn-png">${icone('imagem', 'icone--sm')}Radar (PNG)</button><button class="btn btn--sec btn--sm" id="btn-pdf">${icone('baixar', 'icone--sm')}Baixar PDF</button></div>`)}</header>
+    <header>${cabecalhoDaMarca(marca, html`<div class="linha">${acoesExtra}<button class="btn btn--sec btn--sm" id="btn-png">${icone('imagem', 'icone--sm')}Radar (PNG)</button><button class="btn btn--sec btn--sm" id="btn-pdf">${icone('baixar', 'icone--sm')}Baixar PDF</button></div>`)}</header>
     ${corpo}
     <footer class="muted"><hr class="divisor" style="margin-bottom:1rem">${rodape ?? ''}</footer></div>`);
   ativarRelatorio();

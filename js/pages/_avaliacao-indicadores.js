@@ -128,11 +128,11 @@ export async function montarIndicadores(raiz, av) {
         <div class="nota-destaque"><span class="valor num">${geral === null ? '—' : formatarNota(geral)}</span><span class="de">de 10</span></div>
         <p class="linha">${faixaGeral ? html`<span class="faixa faixa--${faixaGeral.id} faixa-fundo">${icone(FAIXA_ICONE[faixaGeral.id], 'icone--sm')}${faixaGeral.rotulo}</span>` : ''}
           ${insights.variacao ? html`<span class="variacao ${insights.variacao.geral >= 0 ? 'variacao--sobe' : 'variacao--desce'}">${icone(insights.variacao.geral >= 0 ? 'sobe' : 'desce', 'icone--sm')} ${sinal(insights.variacao.geral)} desde a avaliação anterior</span>` : ''}</p>
-        <table class="tabela"><thead><tr><th>Grupo</th><th class="dir">Nota</th><th>Faixa</th><th class="dir">Meta</th><th class="dir">Var.</th></tr></thead>
+        <div class="tabela-wrap"><table class="tabela"><thead><tr><th>Grupo</th><th class="dir">Nota</th><th>Faixa</th><th class="dir">Meta</th><th class="dir">Var.</th></tr></thead>
           <tbody>${ind.grupos.map((g) => {
             const v = insights.variacao?.grupos.find((x) => x.id === g.id);
             return html`<tr><td>${g.nome}</td><td class="dir num" data-rotulo="Nota">${g.nota === null ? '—' : formatarNota(g.nota)}</td><td data-rotulo="Faixa">${linhaFaixa(classificar(g.nota, faixas))}</td><td class="dir num" data-rotulo="Meta">${g.meta === null ? '—' : formatarNota(g.meta)}</td><td class="dir num" data-rotulo="Variação">${v ? sinal(v.variacao) : '—'}</td></tr>`;
-          })}</tbody></table>
+          })}</tbody></table></div>
       </div>
       <div><div id="area-radar"></div>
         <div class="chips" style="justify-content:center;margin-top:.5rem" role="group" aria-label="Séries do radar">

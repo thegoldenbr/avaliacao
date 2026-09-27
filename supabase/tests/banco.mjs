@@ -219,6 +219,24 @@ ok((await q(`select public.liberar_relatorio($1,true) t`, [avPub]))[0].t !== nul
 ok((await q(`select public.liberar_relatorio($1,false) t`, [avPub]))[0].t === null, 'e revoga outra vez');
 await db.exec(`reset role`); await db.exec(`set role anon`);
 ok((await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r.liberado === false, 'depois de revogar, o link volta a ficar travado');
+
+// Modo de apresentação para o cliente: só pode ser liberado depois do dashboard, e revogar o dashboard revoga os dois.
+await como(admin);
+let apErro = null;
+try { await q(`select public.liberar_apresentacao_cliente($1,true) t`, [avPub]); } catch (e) { apErro = e; }
+ok(apErro?.message?.includes('relatorio_nao_liberado'), 'não dá para liberar a apresentação antes do dashboard');
+await q(`select public.liberar_relatorio($1,true) t`, [avPub]);
+ok((await q(`select public.liberar_apresentacao_cliente($1,true) t`, [avPub]))[0].t !== null, 'com o dashboard liberado, a apresentação pode ser liberada');
+await db.exec(`reset role`); await db.exec(`set role anon`);
+ok((await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r.apresentacao_liberada === true, 'o link público informa que a apresentação está liberada');
+await como(admin);
+ok((await q(`select public.liberar_apresentacao_cliente($1,false) t`, [avPub]))[0].t === null, 'operador revoga só a apresentação, mantendo o dashboard');
+await db.exec(`reset role`); await db.exec(`set role anon`);
+ok((await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r.apresentacao_liberada === false, 'revogada a apresentação, o dashboard continua liberado');
+await como(admin);
+ok((await q(`select public.liberar_apresentacao_cliente($1,true) t`, [avPub]))[0].t !== null, 'libera a apresentação de novo');
+await q(`select public.liberar_relatorio($1,false) t`, [avPub]);
+ok((await q(`select apresentacao_liberada_em from public.avaliacoes where id=$1`, [avPub]))[0].apresentacao_liberada_em === null, 'revogar o dashboard revoga a apresentação junto');
 await db.exec(`reset role`);
 
 console.log(falhas ? `\n${falhas} falha(s)` : '\ntodos os testes passaram');

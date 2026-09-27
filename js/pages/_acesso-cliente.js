@@ -28,6 +28,17 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
     : html`<div class="aviso aviso--atencao" role="status">${icone('aviso')}<div class="pilha pilha--sm"><p><b>Travado para o cliente.</b> Quem abrir o link vê apenas um aviso de que o relatório ainda não foi liberado. Libere depois de apresentar o resultado.</p>
         <div><button class="btn btn--sm" data-acesso="liberar">${icone('ok', 'icone--sm')}Liberar para o cliente</button></div></div></div>`;
 
+  const liberacaoApresentacao = () => {
+    if (!av.relatorio_liberado_em) {
+      return html`<div class="aviso" role="status">${icone('cadeado')}<p><b>Modo de apresentação travado.</b> Libere primeiro o dashboard do cliente, acima, para depois poder liberar o modo de apresentação.</p></div>`;
+    }
+    return av.apresentacao_liberada_em
+      ? html`<div class="aviso aviso--ok" role="status">${icone('ok')}<div class="pilha pilha--sm"><p><b>Modo de apresentação liberado</b> desde ${formatarDataHora(av.apresentacao_liberada_em)}. O cliente vê o botão "Modo de apresentação" no dashboard dele.</p>
+          <div><button class="btn btn--sec btn--sm" data-acesso="revogar-apresentacao">${icone('cadeado', 'icone--sm')}Revogar modo de apresentação</button></div></div></div>`
+      : html`<div class="aviso aviso--atencao" role="status">${icone('aviso')}<div class="pilha pilha--sm"><p>O cliente ainda não vê o botão de modo de apresentação no dashboard dele.</p>
+          <div><button class="btn btn--sec btn--sm" data-acesso="liberar-apresentacao">${icone('monitor', 'icone--sm')}Liberar modo de apresentação para o cliente</button></div></div></div>`;
+  };
+
   function desenhar() {
     const pin = av.relatorio_senha;
     const link = linkDoRelatorio(av.token_relatorio);
@@ -55,6 +66,10 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
             <p class="muted">Envie o PIN ao cliente junto com o link. Ao gerar um novo PIN, o anterior para de funcionar e o cliente precisa digitar o novo. 5 erros seguidos bloqueiam o link por 10 minutos.</p>`
           : html`<p class="muted">Sem PIN, qualquer pessoa com o link abre o dashboard.</p>`}
       </div>
+      <div class="pilha pilha--sm" style="border-top:1px solid var(--color-border);padding-top:1rem"><h3>Modo de apresentação para o cliente</h3>
+        <p class="muted">Além do dashboard, o cliente pode abrir os mesmos dados em tela cheia, slide a slide — a mesma apresentação que você usa aqui dentro.</p>
+        ${liberacaoApresentacao()}
+      </div>
     </section>`);
   }
 
@@ -62,9 +77,19 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
     const { data, error } = await supabase.rpc('liberar_relatorio', { p_avaliacao_id: av.id, p_liberar: liberarAgora });
     if (error) return toast(mensagemDeErro(error, 'Não foi possível alterar a liberação.'), 'erro');
     av.relatorio_liberado_em = data;
+    if (!liberarAgora) av.apresentacao_liberada_em = null; // revogar o dashboard revoga o modo de apresentação junto
     desenhar();
     aoAlterar?.();
     toast(liberarAgora ? 'Relatório liberado para o cliente.' : 'Acesso do cliente revogado: o link voltou a ficar travado.');
+  }
+
+  async function liberarApresentacao(liberarAgora) {
+    const { data, error } = await supabase.rpc('liberar_apresentacao_cliente', { p_avaliacao_id: av.id, p_liberar: liberarAgora });
+    if (error) return toast(mensagemDeErro(error, 'Não foi possível alterar o modo de apresentação.'), 'erro');
+    av.apresentacao_liberada_em = data;
+    desenhar();
+    aoAlterar?.();
+    toast(liberarAgora ? 'Modo de apresentação liberado para o cliente.' : 'Modo de apresentação revogado.');
   }
 
   async function definirPin(ativar, renovar = false) {
@@ -102,6 +127,14 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
     if (acao === 'revogar') {
       if (!(await confirmar({ titulo: 'Revogar acesso do cliente', descricao: 'O link deixa de mostrar o relatório imediatamente. Você pode liberar de novo depois.', rotuloConfirmar: 'Revogar acesso' }))) return;
       return liberar(false);
+    }
+    if (acao === 'liberar-apresentacao') {
+      if (!(await confirmar({ titulo: 'Liberar modo de apresentação', descricao: `O cliente passa a ver o botão "Modo de apresentação" no dashboard dele, com os mesmos dados em tela cheia. Você pode revogar a qualquer momento.`, rotuloConfirmar: 'Liberar modo de apresentação', perigo: false }))) return;
+      return liberarApresentacao(true);
+    }
+    if (acao === 'revogar-apresentacao') {
+      if (!(await confirmar({ titulo: 'Revogar modo de apresentação', descricao: 'O botão some do dashboard do cliente imediatamente. O dashboard em si continua liberado.', rotuloConfirmar: 'Revogar' }))) return;
+      return liberarApresentacao(false);
     }
     if (acao === 'copiar-link') return copiar(linkDoRelatorio(av.token_relatorio), 'Link copiado.');
     if (acao === 'copiar-pin') return copiar(av.relatorio_senha, 'PIN copiado.');
