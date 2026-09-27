@@ -6,6 +6,7 @@ mkdirSync('vendor', { recursive: true });
 mkdirSync('fonts', { recursive: true });
 copyFileSync('node_modules/@supabase/supabase-js/dist/umd/supabase.js', 'vendor/supabase.js');
 copyFileSync('node_modules/sortablejs/Sortable.min.js', 'vendor/sortable.min.js');
+copyFileSync('node_modules/qrcode-generator/dist/qrcode.js', 'vendor/qrcode.js');
 for (const peso of [400, 500, 600, 700]) {
   copyFileSync(`node_modules/@fontsource/figtree/files/figtree-latin-${peso}-normal.woff2`, `fonts/figtree-latin-${peso}-normal.woff2`);
 }
