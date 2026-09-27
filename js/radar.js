@@ -4,7 +4,7 @@
  * também pelo estilo da linha, não só pela cor. Inclui legenda e tabela equivalente para leitores de tela.
  * Com menos de 3 eixos, usa barras horizontais.
  */
-import { html, raw } from './html.js';
+import { esc, html, raw } from './html.js';
 import { formatarNota } from './lib/formatacao.js';
 
 const ESTILOS = {
@@ -60,7 +60,7 @@ export function radar(rotulos, series, { animar = false, titulo = 'Radar de dese
     .join('');
   const atual = series.find((s) => s.tipo === 'atual');
   const pontos = atual
-    ? atual.valores.map((v, i) => (v == null ? '' : `<circle class="ponto" cx="${ponto(i, v)[0].toFixed(1)}" cy="${ponto(i, v)[1].toFixed(1)}" r="6"><title>${rotulos[i].replace(/[<>&"]/g, '')}: ${formatarNota(v)}</title></circle>`)).join('')
+    ? atual.valores.map((v, i) => (v == null ? '' : `<circle class="ponto" cx="${ponto(i, v)[0].toFixed(1)}" cy="${ponto(i, v)[1].toFixed(1)}" r="6"/>`)).join('')
     : '';
   const textos = rotulos
     .map((r, i) => {
@@ -71,6 +71,62 @@ export function radar(rotulos, series, { animar = false, titulo = 'Radar de dese
       return html`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${ancora}">${r}</text>`.toString();
     })
     .join('');
-  const svg = `<svg class="radar${animar ? ' radar--anima' : ''}" viewBox="-70 0 540 400" role="img" aria-label="${titulo}">${aneis}${eixos}${escala}${formas}${pontos}${textos}</svg>`;
-  return html`${raw(svg)}${semLegenda ? '' : legenda(series)}${tabelaParaLeitores(rotulos, series)}`;
+  // Um alvo invisível (bem maior que o ponto) em cada vértice: passar o mouse (ou tocar) mostra a nota
+  // de cada série naquele eixo. Os dados vão codificados no atributo (URI, não HTML) para não precisar
+  // escapar aspas/HTML dentro do atributo.
+  const alvos = rotulos
+    .map((r, i) => {
+      const [x, y] = ponto(i, 10);
+      const info = series.filter((s) => s.valores[i] != null).map((s) => ({ nome: s.nome, valor: formatarNota(s.valores[i]), cor: ESTILOS[s.tipo].cor }));
+      if (!info.length) return '';
+      const dados = encodeURIComponent(JSON.stringify({ rotulo: r, info }));
+      return `<circle class="radar-alvo" data-info="${dados}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="26" aria-hidden="true"/>`;
+    })
+    .join('');
+  const svg = `<svg class="radar${animar ? ' radar--anima' : ''}" viewBox="-70 0 540 400" role="img" aria-label="${titulo}">${aneis}${eixos}${escala}${formas}${pontos}${textos}${alvos}</svg>`;
+  return html`<div class="radar-caixa">${raw(svg)}<div class="radar-dica" role="tooltip" hidden></div></div>${semLegenda ? '' : legenda(series)}${tabelaParaLeitores(rotulos, series)}`;
 }
+
+let ligado = false;
+
+/** Liga a interação do radar (mostrar a nota de cada série ao passar o mouse/tocar/focar um eixo). */
+function ativar() {
+  if (ligado) return;
+  ligado = true;
+
+  function mostrar(alvo) {
+    const caixa = alvo.closest('.radar-caixa');
+    const dica = caixa?.querySelector('.radar-dica');
+    if (!dica) return;
+    const { rotulo, info } = JSON.parse(decodeURIComponent(alvo.dataset.info));
+    dica.innerHTML = `<b>${esc(rotulo)}</b><ul>${info.map((i) => `<li><span class="radar-dica-cor" style="background:${esc(i.cor)}"></span>${esc(i.nome)}: <b class="num">${esc(i.valor)}</b></li>`).join('')}</ul>`;
+    const rCaixa = caixa.getBoundingClientRect();
+    const rAlvo = alvo.getBoundingClientRect();
+    dica.hidden = false;
+    const cx = rAlvo.left + rAlvo.width / 2 - rCaixa.left;
+    const cy = rAlvo.top + rAlvo.height / 2 - rCaixa.top;
+    dica.style.left = `${Math.min(Math.max(cx, 70), rCaixa.width - 70)}px`;
+    dica.style.top = `${cy}px`;
+    dica.classList.toggle('radar-dica--baixo', cy < 70);
+  }
+  function esconder(caixa) {
+    const dica = caixa?.querySelector?.('.radar-dica');
+    if (dica) dica.hidden = true;
+  }
+
+  document.addEventListener('pointerover', (e) => {
+    const alvo = e.target.closest('.radar-alvo');
+    if (alvo) mostrar(alvo);
+  });
+  document.addEventListener('pointerout', (e) => {
+    const alvo = e.target.closest('.radar-alvo');
+    if (alvo && !alvo.contains(e.relatedTarget)) esconder(alvo.closest('.radar-caixa'));
+  });
+  // Toque: no primeiro toque num alvo mostra a dica; tocar fora de qualquer alvo esconde.
+  document.addEventListener('pointerdown', (e) => {
+    const alvo = e.target.closest('.radar-alvo');
+    if (alvo) return mostrar(alvo);
+    document.querySelectorAll('.radar-dica').forEach((d) => (d.hidden = true));
+  });
+}
+ativar();

@@ -248,6 +248,20 @@ details.bloco > .corpo { padding: .25rem 0 1.25rem; display: flex; flex-directio
 .radar .serie--meta { fill: none; stroke: var(--serie-meta); stroke-width: 2; stroke-dasharray: 2 5; stroke-linecap: round; }
 .radar .serie--media { fill: none; stroke: var(--serie-media); stroke-width: 2; stroke-dasharray: 10 4 2 4; }
 .radar .ponto { fill: var(--color-primary); stroke: var(--color-surface); stroke-width: 2; }
+.radar .radar-alvo { fill: transparent; cursor: pointer; }
+.radar .radar-alvo:hover, .radar .radar-alvo:focus-visible { fill: color-mix(in srgb, var(--color-primary) 14%, transparent); outline: none; }
+
+.radar-caixa { position: relative; }
+.radar-dica {
+  position: absolute; transform: translate(-50%, calc(-100% - 14px)); min-width: 9rem; max-width: 14rem;
+  background: var(--color-surface); border: 1px solid var(--color-border-strong); border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-pop); padding: .625rem .75rem; font-size: .8125rem; line-height: 1.4; pointer-events: none; z-index: 3;
+}
+.radar-dica--baixo { transform: translate(-50%, 14px); }
+.radar-dica b { display: block; margin-bottom: .25rem; }
+.radar-dica ul { margin: 0; padding: 0; list-style: none; display: grid; gap: .125rem; }
+.radar-dica li { display: flex; align-items: center; gap: .375rem; color: var(--color-text-muted); }
+.radar-dica-cor { width: 8px; height: 8px; border-radius: 50%; flex: none; }
 @media (prefers-reduced-motion: no-preference) {
   .radar--anima .serie--atual { animation: radar-abre .9s cubic-bezier(.2,.7,.2,1) both; }
 }
