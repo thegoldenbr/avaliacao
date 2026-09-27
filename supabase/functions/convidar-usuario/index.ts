@@ -2,8 +2,8 @@
 // Só administradores ativos. Cria (ou reaproveita) o usuário pela API admin, cria/atualiza o perfil e devolve
 // um link de convite para o admin enviar (WhatsApp, e-mail...). Não depende do envio de e-mails do Supabase.
 //
-// O link usa token_hash + verifyOtp (funciona com HashRouter):
-//   {url_base}?token_hash=...&type=invite#/aceitar-convite
+// O link usa token_hash + verifyOtp; o token vai na query (não no fragmento):
+//   {url_base}aceitar-convite.html?token_hash=...&type=invite
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 
@@ -111,6 +111,6 @@ Deno.serve(async (req) => {
   if (erroPerfil) return responder(req, { erro: 'O convite foi gerado, mas não foi possível salvar o perfil.' }, 500);
 
   const tokenHash = resultado.data.properties.hashed_token;
-  const link = `${pedido.url_base}?token_hash=${encodeURIComponent(tokenHash)}&type=${tipo}#/aceitar-convite`;
+  const link = `${pedido.url_base}aceitar-convite.html?token_hash=${encodeURIComponent(tokenHash)}&type=${tipo}`;
   return responder(req, { link, usuario_id: usuario.id, tipo });
 });

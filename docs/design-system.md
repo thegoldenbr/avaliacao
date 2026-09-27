@@ -97,3 +97,7 @@ Cartões idênticos para tudo, rótulos em caixa alta acima de títulos, gradien
 - Páginas estáticas (HTML/CSS). Um pequeno `mockup.js` só injeta ícones Lucide, o menu da área interna e desenha o radar a partir dos dados; a versão real usa React e Recharts.
 - O **PDF** é sempre em papel branco, independentemente do tema.
 - Estilos `style="…"` inline aparecem em poucos pontos dos mockups por conveniência; não serão usados no código real.
+
+## Implementação (atualização de 26/09/2026)
+
+O app é HTML + JavaScript puro (sem React/Tailwind). Os tokens acima vivem em `css/app.css` (variáveis CSS, tema por `data-tema`), derivados diretamente dos mockups. A cor de destaque configurável é aplicada em `--color-primary` em tempo de execução (`js/marca.js`, contraste calculado em `js/lib/cor.js`).

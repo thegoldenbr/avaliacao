@@ -1,7 +1,7 @@
 name: Deploy no GitHub Pages
 
-# A cada push na main: testa, compila e publica o app (e os mockups em /mockups/).
-# A URL do projeto e a chave publishable do Supabase (públicas) vêm de .env.production.
+# A cada push na main: roda os testes e publica o site estático (HTML + JS, sem build) e os mockups em /mockups/.
+# A URL do projeto e a chave publishable do Supabase (públicas) ficam em js/config.js.
 on:
   push:
     branches: [main]
@@ -28,13 +28,14 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run test:banco
-      - run: npm run build
-      - name: Incluir os mockups da Fase 0
-        run: cp -r mockups dist/mockups
+      - name: Montar o site (só o que o navegador precisa)
+        run: |
+          mkdir _site
+          cp -r *.html css js fonts vendor mockups .nojekyll _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: _site
 
   deploy:
     needs: build

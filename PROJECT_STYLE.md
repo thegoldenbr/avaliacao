@@ -8,10 +8,10 @@ description: Sistema para uma empresa avaliar outras empresas com questionários
 tone: profissional, minimalista, confiável
 
 ## Stack
-framework: React (Vite)
-typescript: sim
-component_library: Shadcn/ui
-icons: Lucide
+framework: HTML + JavaScript (módulos ES, sem build) — decisão de 2026-09-26, para servir direto no GitHub Pages
+typescript: não
+component_library: CSS próprio (css/app.css), derivado dos mockups
+icons: Lucide (SVGs embutidos em js/icones.js)
 animations: CSS (sutil, respeitando prefers-reduced-motion)
 
 ## Cores
@@ -37,8 +37,8 @@ dark_text_secondary: "#94A3B8"
 dark_primary: "#8EA2FF"
 
 ## Tipografia
-font_heading: "Figtree — local (@fontsource)"
-font_body: "Figtree — local (@fontsource)"
+font_heading: "Figtree — local (fonts/)"
+font_body: "Figtree — local (fonts/)"
 font_mono: "IBM Plex Mono — local (@fontsource), uso raro (não instalada ainda)"
 # Decisão (2026-09-26): opção B, Figtree. A opção A (IBM Plex Sans) segue nos mockups só para comparação.
 

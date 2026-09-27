@@ -3,6 +3,5 @@
 !.claude/skills/
 node_modules/
 .env
-dist/
 *.local
 supabase/.temp/

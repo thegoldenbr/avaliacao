@@ -9,8 +9,8 @@ disable-model-invocation: true
 O projeto vive no GitHub (`origin/main`), é servido pelo GitHub Pages e usa o Supabase como backend. Um push na `main` dispara o deploy.
 
 1. `git status --short` e `git diff --stat`. Se não houver mudanças, avise e pare.
-2. Confira que nada secreto vai junto: `.env` (local) fica fora do git; só `.env.production` (valores públicos) é versionado. Se aparecer `service_role`, chave de IA ou senha em qualquer arquivo, pare e avise.
-3. Rode `npm run build`, `npm test` e `npm run test:banco`. Se algo falhar, corrija ou avise; não faça commit quebrado.
+2. Confira que nada secreto vai junto: `.env` (local) fica fora do git; a URL e a chave publishable ficam em `js/config.js` (valores públicos). Se aparecer `service_role`, chave de IA ou senha em qualquer arquivo, pare e avise.
+3. Rode `npm test` e `npm run test:banco` (o site é HTML puro, não há build). Se algo falhar, corrija ou avise; não faça commit quebrado.
 4. Se as migrations mudaram, rode `npm run sql:tudo` para regenerar `supabase/instalar_tudo.sql`.
 5. Faça o commit (mensagem em português, curta e objetiva, terminando com a linha de coautoria configurada na sessão). Nunca use `--no-verify` nem `--amend` sem pedido.
 6. **Pergunte ao usuário (AskUserQuestion) se pode enviar agora**, resumindo o que vai no push e que ele publica o site. Só execute `git push` se a resposta for sim. O push também exige aprovação nas permissões do projeto.
