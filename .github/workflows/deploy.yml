@@ -1,8 +1,7 @@
 name: Deploy no GitHub Pages
 
 # A cada push na main: testa, compila e publica o app (e os mockups em /mockups/).
-# As duas variáveis abaixo são PÚBLICAS (URL do projeto e chave publishable do Supabase).
-# Cadastre em: Settings > Secrets and variables > Actions > aba Variables.
+# A URL do projeto e a chave publishable do Supabase (públicas) vêm de .env.production.
 on:
   push:
     branches: [main]
@@ -20,17 +19,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
     steps:
       - uses: actions/checkout@v4
-      - name: Conferir variáveis do Supabase
-        run: |
-          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
-            echo "::error::Cadastre VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY em Settings > Secrets and variables > Actions > Variables."
-            exit 1
-          fi
       - uses: actions/setup-node@v4
         with:
           node-version: 22

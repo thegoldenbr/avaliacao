@@ -24,29 +24,22 @@ npm run dev
 | `npm run build` | Checagem de tipos e build de produção (`dist/`) |
 | `npm test` | Testes unitários (Vitest) |
 | `npm run test:banco` | Testa migrations, RLS e RPCs num Postgres em memória (PGlite), sem Docker e sem tocar no Supabase |
+| `npm run sql:tudo` | Regenera `supabase/instalar_tudo.sql` (migrations + seed) |
 | `npm run tipos` | Regenera `src/lib/database.types.ts` a partir do projeto (precisa de `npx supabase login`) |
 
-## Configurar o Supabase
+## Colocar no ar (3 passos)
 
-1. **Projeto:** `https://rbefxbmfyvoaiubpmfwg.supabase.co` (já criado).
-2. **Aplicar o banco.** Escolha um caminho:
-   - *SQL Editor* (mais simples): abra cada arquivo de `supabase/migrations/` em ordem e execute; depois, se quiser dados de exemplo, execute `supabase/seed.sql`.
-   - *CLI:* `npx supabase login`, `npx supabase link --project-ref rbefxbmfyvoaiubpmfwg`, `npx supabase db push` (a CLI não aplica o seed no projeto remoto; use o SQL Editor para isso).
-3. **Auth:** em *Authentication > Sign In / Providers*, desative **Allow new users to sign up** (cadastro público desligado). Em *URL Configuration*, defina **Site URL** e **Redirect URLs** com o endereço do GitHub Pages (ex.: `https://thegoldenbr.github.io/avaliacao/`) e `http://localhost:5173/`.
-4. **Primeiro administrador:** em *Authentication > Users > Add user*, crie o usuário com e-mail e senha e copie o UUID. No SQL Editor:
+1. **Banco:** no Supabase, abra *SQL Editor > New query*, cole todo o conteúdo de [`supabase/instalar_tudo.sql`](supabase/instalar_tudo.sql) e clique em **Run** (uma única vez). Ele cria tabelas, RLS, RPCs e os dados de exemplo. (Gerado por `npm run sql:tudo` a partir de `supabase/migrations/` e `seed.sql`.)
+2. **Administrador:** em *Authentication > Users > Add user > Create new user*, informe e-mail e senha (marque *Auto Confirm User*). **O primeiro usuário criado vira administrador automaticamente.** Os seguintes só entram por convite do admin (Fase 2); sem perfil, um usuário não enxerga dado nenhum.
+3. **GitHub Pages:** no repositório, *Settings > Pages > Source: **GitHub Actions***. A cada push na `main`, o workflow [deploy.yml](.github/workflows/deploy.yml) testa, compila e publica em `https://thegoldenbr.github.io/avaliacao/` (mockups em `/mockups/`).
 
-   ```sql
-   insert into public.perfis (id, nome, email, papel)
-   values ('UUID-DO-USUARIO', 'Seu Nome', 'seu@email.com', 'admin');
-   ```
+A URL do projeto e a chave publishable (públicas) já estão em `.env.production`, então não é preciso cadastrar variáveis no GitHub.
 
-5. **Secrets das Edge Functions** (Fases 2 e 5; a chave da IA você cadastra, sem colar no chat): *Edge Functions > Secrets* ou `npx supabase secrets set ANTHROPIC_API_KEY=... ANTHROPIC_MODEL=...`.
+**Antes de convidar usuários (Fase 2):** em *Authentication > Sign In / Providers*, desative **Allow new users to sign up**, e em *URL Configuration* defina **Site URL** = `https://thegoldenbr.github.io/avaliacao/` e inclua também em **Redirect URLs** esse endereço e `http://localhost:5173/`. Mesmo com o cadastro aberto, quem se cadastra não acessa nada (não tem perfil), mas o correto é desligá-lo.
 
-## Publicar no GitHub Pages
+**Chave da IA (Fase 5):** você mesmo cadastra em *Edge Functions > Secrets* (`ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`); nunca no repositório.
 
-1. No repositório: *Settings > Pages > Source: **GitHub Actions***.
-2. *Settings > Secrets and variables > Actions > aba **Variables***: crie `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` (são valores públicos).
-3. Faça push na `main`: o workflow [deploy.yml](.github/workflows/deploy.yml) roda os testes, compila e publica em `https://thegoldenbr.github.io/avaliacao/` (mockups em `/mockups/`).
+Por CLI, em vez do SQL Editor: `npx supabase login`, `npx supabase link --project-ref rbefxbmfyvoaiubpmfwg`, `npx supabase db push`.
 
 ## Segurança do banco (resumo)
 

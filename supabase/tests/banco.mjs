@@ -20,7 +20,7 @@ await db.exec(`
   create schema extensions;
   create role anon nologin; create role authenticated nologin; create role service_role nologin;
   create schema auth;
-  create table auth.users (id uuid primary key default gen_random_uuid(), email text);
+  create table auth.users (id uuid primary key default gen_random_uuid(), email text, created_at timestamptz default now(), raw_user_meta_data jsonb);
   create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('test.uid', true), '')::uuid $$;
   create schema storage;
   create table storage.buckets (id text primary key, name text, public boolean, file_size_limit bigint, allowed_mime_types text[]);
@@ -96,7 +96,9 @@ ok((await num(`select visualizacoes n from public.avaliacoes where token_relator
 const admin = (await q(`insert into auth.users(email) values ('a@x') returning id`))[0].id;
 const analista = (await q(`insert into auth.users(email) values ('b@x') returning id`))[0].id;
 const semperfil = (await q(`insert into auth.users(email) values ('c@x') returning id`))[0].id;
-await db.exec(`insert into public.perfis(id,nome,email,papel) values ('${admin}','Ana','a@x','admin'),('${analista}','Beto','b@x','analista')`);
+ok((await q(`select papel from public.perfis where id='${admin}'`))[0]?.papel === 'admin', 'primeiro usuário criado vira admin automaticamente');
+ok((await num(`select count(*)::int n from public.perfis where id in ('${analista}','${semperfil}')`)) === 0, 'usuários seguintes NÃO ganham perfil sozinhos');
+await db.exec(`insert into public.perfis(id,nome,email,papel) values ('${analista}','Beto','b@x','analista')`);
 const como = async (uid) => { await db.exec(`reset role`); await db.exec(`select set_config('test.uid','${uid}',false)`); await db.exec(`set role authenticated`); };
 
 await como(semperfil);
