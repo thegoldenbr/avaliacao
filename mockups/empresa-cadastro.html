@@ -1,0 +1,42 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, nofollow"><title>Cadastro de empresa — Radar de Desempenho</title><script src="assets/tema.js"></script><link rel="stylesheet" href="assets/mockup.css"><script src="assets/mockup.js" defer></script></head>
+<body data-ativo="empresas">
+<main class="pilha pilha--lg">
+  <header>
+    <p class="migalha"><a href="empresas.html">Empresas</a> <i data-i="dir" data-cls="icone--sm"></i> Nova empresa</p>
+    <h1>Nova empresa</h1>
+  </header>
+  <form class="pilha pilha--lg leitura" onsubmit="return false">
+    <fieldset class="pilha">
+      <legend><h2>Dados da empresa</h2></legend>
+      <div class="form-grade">
+        <div class="campo cheio"><label for="rs">Razão social</label><input class="input" id="rs" value="Metalúrgica Serra Azul S.A."></div>
+        <div class="campo"><label for="nf">Nome fantasia</label><input class="input" id="nf" value="Serra Azul"></div>
+        <div class="campo"><label for="cnpj">CNPJ</label><input class="input num" id="cnpj" inputmode="text" autocapitalize="characters" value="12.ABC.345/01DE-35" aria-describedby="cnpj-a"><span class="ajuda" id="cnpj-a">Aceita o formato numérico e o alfanumérico.</span></div>
+        <div class="campo"><label for="seg">Segmento</label><select class="select" id="seg"><option>Indústria metalmecânica</option></select></div>
+        <div class="campo"><label for="porte">Porte</label><select class="select" id="porte"><option>Média empresa</option></select></div>
+        <div class="campo"><label for="mun">Município</label><input class="input" id="mun" value="Caxias do Sul"></div>
+        <div class="campo"><label for="uf">UF</label><select class="select" id="uf"><option>RS</option></select></div>
+      </div>
+    </fieldset>
+    <fieldset class="pilha">
+      <legend><h2>Responsável</h2></legend>
+      <div class="form-grade">
+        <div class="campo"><label for="rn">Nome</label><input class="input" id="rn" value="Roberto Menezes"></div>
+        <div class="campo"><label for="rc">Cargo</label><input class="input" id="rc" value="Diretor administrativo"></div>
+        <div class="campo"><label for="re">E-mail</label><input class="input" id="re" type="email" inputmode="email" value="roberto@serraazul.example"></div>
+        <div class="campo">
+          <label for="rt">Telefone</label>
+          <input class="input num" id="rt" type="tel" inputmode="tel" value="(54) 9999-99" aria-invalid="true" aria-describedby="rt-e">
+          <span class="erro" id="rt-e"><i data-i="info" data-cls="icone--sm"></i>O telefone está incompleto. Use DDD e 8 ou 9 dígitos, como (54) 99999-0000.</span>
+        </div>
+        <div class="campo cheio"><label for="obs">Observações</label><textarea class="textarea" id="obs">Cliente desde 2024. Prefere contato por WhatsApp.</textarea></div>
+      </div>
+    </fieldset>
+    <label class="opcao"><input type="checkbox" checked><span>Empresa ativa</span></label>
+    <div class="linha">
+      <button class="btn" type="submit">Salvar empresa</button>
+      <a class="btn btn--ghost" href="empresas.html">Cancelar</a>
+    </div>
+  </form>
+</main>
+</body></html>

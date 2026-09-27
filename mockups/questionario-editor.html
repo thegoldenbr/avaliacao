@@ -1,0 +1,96 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, nofollow"><title>Editor de questionário — Radar de Desempenho</title><script src="assets/tema.js"></script><link rel="stylesheet" href="assets/mockup.css"><script src="assets/mockup.js" defer></script></head>
+<body data-ativo="questionarios">
+<main class="pilha pilha--lg">
+  <header>
+    <p class="migalha"><a href="questionario-editor.html">Questionários</a> <i data-i="dir" data-cls="icone--sm"></i> Maturidade de Gestão</p>
+    <div class="pagina-topo" style="margin-bottom:0">
+      <div><h1>Maturidade de Gestão</h1><p>6 grupos · 30 perguntas · usado em 14 avaliações</p></div>
+      <div class="linha">
+        <a class="btn btn--sec" href="responder-pergunta.html"><i data-i="olho"></i>Pré-visualizar</a>
+        <button class="btn btn--sec"><i data-i="copia"></i>Duplicar</button>
+        <button class="btn btn--sec">Arquivar</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="aviso aviso--info"><i data-i="info"></i><p>Editar este modelo não altera avaliações já criadas: cada avaliação guarda a sua própria cópia das perguntas.</p></div>
+
+  <div class="pilha">
+    <section class="grupo-q" aria-labelledby="g1">
+      <header>
+        <span class="alca" title="Arraste para reordenar"><i data-i="alca"></i></span>
+        <div style="flex:1;min-width:200px">
+          <h2 id="g1" style="font-size:1.0625rem">1. Estratégia e Governança</h2>
+          <p class="peso-rel">Rótulo no radar: Estratégia · meta 8,0</p>
+        </div>
+        <div class="linha">
+          <div class="campo" style="width:120px"><label for="pg1" class="peso-rel">Peso do grupo</label><input id="pg1" class="input num" type="number" inputmode="decimal" value="2"></div>
+          <span class="badge" title="Participação na nota geral">17% da nota</span>
+          <button class="btn btn--ghost btn--icone" aria-label="Subir grupo"><i data-i="sobe"></i></button>
+          <button class="btn btn--ghost btn--icone" aria-label="Descer grupo"><i data-i="desce"></i></button>
+        </div>
+      </header>
+      <div class="pergunta-q">
+        <span class="alca"><i data-i="alca"></i></span>
+        <div class="pilha pilha--sm">
+          <div class="campo"><label for="p1">Enunciado</label><input id="p1" class="input" value="A empresa tem metas anuais claras e conhecidas pela liderança?"></div>
+          <div class="linha">
+            <div class="campo" style="width:96px"><label for="pp1" class="peso-rel">Peso</label><input id="pp1" class="input num" type="number" value="3"></div>
+            <span class="peso-rel">50% do grupo</span>
+            <label class="opcao"><input type="checkbox"><span>Escala invertida</span></label>
+            <label class="opcao"><input type="checkbox" checked><span>Permite comentário</span></label>
+            <span class="linha" style="margin-left:auto">
+              <button class="btn btn--ghost btn--icone" aria-label="Subir pergunta"><i data-i="sobe"></i></button>
+              <button class="btn btn--ghost btn--icone" aria-label="Descer pergunta"><i data-i="desce"></i></button>
+              <button class="btn btn--ghost btn--icone" aria-label="Remover pergunta"><i data-i="lixo"></i></button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="pergunta-q">
+        <span class="alca"><i data-i="alca"></i></span>
+        <div class="pilha pilha--sm">
+          <div class="campo"><label for="p2">Enunciado</label><input id="p2" class="input" value="Com que frequência a diretoria revisa os resultados contra as metas?"></div>
+          <p class="ajuda muted">Rótulos da escala: 0 = Nunca · 10 = Todo mês</p>
+          <div class="linha">
+            <div class="campo" style="width:96px"><label for="pp2" class="peso-rel">Peso</label><input id="pp2" class="input num" type="number" value="2"></div>
+            <span class="peso-rel">33% do grupo</span>
+          </div>
+        </div>
+      </div>
+      <div class="pergunta-q">
+        <span class="alca"><i data-i="alca"></i></span>
+        <div class="pilha pilha--sm">
+          <div class="campo"><label for="p3">Enunciado</label><input id="p3" class="input" value="Decisões importantes dependem de uma única pessoa."></div>
+          <div class="linha">
+            <div class="campo" style="width:96px"><label for="pp3" class="peso-rel">Peso</label><input id="pp3" class="input num" type="number" value="1"></div>
+            <span class="peso-rel">17% do grupo</span>
+            <label class="opcao"><input type="checkbox" checked><span>Escala invertida</span></label>
+            <span class="badge badge--info">10 = nunca depende</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding:.75rem;border-top:1px solid var(--color-border)"><button class="btn btn--ghost btn--sm"><i data-i="plus" data-cls="icone--sm"></i>Adicionar pergunta</button></div>
+    </section>
+
+    <section class="grupo-q" aria-labelledby="g2">
+      <header>
+        <span class="alca"><i data-i="alca"></i></span>
+        <div style="flex:1;min-width:200px"><h2 id="g2" style="font-size:1.0625rem">2. Finanças</h2><p class="peso-rel">5 perguntas · peso do grupo 3</p></div>
+        <span class="badge">25% da nota</span>
+        <button class="btn btn--ghost btn--icone" aria-label="Expandir grupo"><i data-i="baixo"></i></button>
+      </header>
+    </section>
+    <section class="grupo-q" aria-labelledby="g3">
+      <header>
+        <span class="alca"><i data-i="alca"></i></span>
+        <div style="flex:1;min-width:200px"><h2 id="g3" style="font-size:1.0625rem">3. Pessoas e Liderança</h2><p class="peso-rel">5 perguntas · peso do grupo 2</p></div>
+        <span class="badge">17% da nota</span>
+        <button class="btn btn--ghost btn--icone" aria-label="Expandir grupo"><i data-i="baixo"></i></button>
+      </header>
+    </section>
+    <button class="btn btn--sec" style="align-self:flex-start"><i data-i="plus"></i>Adicionar grupo</button>
+  </div>
+  <p class="muted"><i data-i="info" data-cls="icone--sm"></i> No celular, use os botões de subir e descer; no computador também é possível arrastar pela alça.</p>
+</main>
+</body></html>

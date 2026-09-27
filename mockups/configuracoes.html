@@ -1,0 +1,56 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, nofollow"><title>Configurações — Radar de Desempenho</title><script src="assets/tema.js"></script><link rel="stylesheet" href="assets/mockup.css"><script src="assets/mockup.js" defer></script></head>
+<body data-ativo="config">
+<main class="pilha pilha--lg">
+  <header class="pagina-topo"><div><h1>Configurações</h1><p>Visíveis apenas para administradores.</p></div></header>
+  <nav class="abas" aria-label="Seções"><a href="#" aria-current="page">Marca</a><a href="#">Textos</a><a href="#">Escala e faixas</a><a href="#">Usuários</a></nav>
+
+  <section class="pilha leitura" aria-labelledby="c-marca">
+    <h2 id="c-marca">Marca</h2>
+    <div class="form-grade">
+      <div class="campo cheio"><label for="nm">Nome da empresa</label><input class="input" id="nm" value="Vértice Consultoria"></div>
+      <div class="campo"><label for="logo">Logo</label><input class="input" id="logo" type="file" accept="image/*"><span class="ajuda">PNG ou SVG, fundo transparente, até 1 MB.</span></div>
+      <div class="campo"><label for="cor">Cor de destaque</label><div class="linha"><input class="input num" id="cor" value="#2B4ACB" style="max-width:140px"><span class="badge badge--ok"><i data-i="check" data-cls="icone--sm"></i>Contraste AA com o texto branco</span></div></div>
+    </div>
+  </section>
+
+  <section class="pilha leitura" aria-labelledby="c-txt">
+    <h2 id="c-txt">Textos padrão</h2>
+    <div class="campo"><label for="t1">Apresentação do formulário</label><textarea class="textarea" id="t1">Este questionário ajuda a entender onde sua empresa está forte e onde pode evoluir.</textarea></div>
+    <div class="campo"><label for="t2">Aviso de privacidade</label><textarea class="textarea" id="t2">Usamos seu nome e cargo apenas para identificar quem respondeu. As notas e comentários servem para elaborar o relatório da sua empresa.</textarea></div>
+    <div class="campo"><label for="t3">Rodapé do relatório</label><input class="input" id="t3" value="Relatório elaborado por Vértice Consultoria. Material confidencial."></div>
+  </section>
+
+  <section class="pilha leitura" aria-labelledby="c-esc">
+    <h2 id="c-esc">Escala e faixas de classificação</h2>
+    <div class="form-grade"><div class="campo"><label for="e0">Rótulo do 0</label><input class="input" id="e0" value="Discordo totalmente"></div><div class="campo"><label for="e10">Rótulo do 10</label><input class="input" id="e10" value="Concordo totalmente"></div></div>
+    <table class="tabela">
+      <thead><tr><th>Faixa</th><th>De</th><th>Até</th></tr></thead>
+      <tbody>
+        <tr><td><span class="faixa faixa--critico"><span data-faixa-icone="critico"></span>Crítico</span></td><td data-rotulo="De" class="num">0,0</td><td data-rotulo="Até" class="num">4,9</td></tr>
+        <tr><td><span class="faixa faixa--atencao"><span data-faixa-icone="atencao"></span>Atenção</span></td><td data-rotulo="De" class="num">5,0</td><td data-rotulo="Até" class="num">6,9</td></tr>
+        <tr><td><span class="faixa faixa--bom"><span data-faixa-icone="bom"></span>Bom</span></td><td data-rotulo="De" class="num">7,0</td><td data-rotulo="Até" class="num">8,4</td></tr>
+        <tr><td><span class="faixa faixa--excelente"><span data-faixa-icone="excelente"></span>Excelente</span></td><td data-rotulo="De" class="num">8,5</td><td data-rotulo="Até" class="num">10,0</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="pilha" aria-labelledby="c-usr">
+    <div class="linha linha--entre"><h2 id="c-usr">Usuários</h2><button class="btn btn--sec btn--sm"><i data-i="plus" data-cls="icone--sm"></i>Convidar usuário</button></div>
+    <table class="tabela">
+      <thead><tr><th>Nome</th><th>Papel</th><th>Situação</th><th class="dir">Ações</th></tr></thead>
+      <tbody>
+        <tr><td><b>Marina Albuquerque</b><p class="muted">marina@verticeconsultoria.example</p></td><td data-rotulo="Papel">Administradora</td><td data-rotulo="Situação"><span class="badge badge--ok">Ativa</span></td><td class="dir"></td></tr>
+        <tr><td><b>Caio Fontoura</b><p class="muted">caio@verticeconsultoria.example</p></td><td data-rotulo="Papel">Analista</td><td data-rotulo="Situação"><span class="badge badge--ok">Ativo</span></td><td class="dir"><button class="btn btn--ghost btn--sm">Desativar</button></td></tr>
+        <tr><td><b>Helena Prado</b><p class="muted">helena@verticeconsultoria.example</p></td><td data-rotulo="Papel">Analista</td><td data-rotulo="Situação"><span class="badge badge--aviso">Convite pendente</span></td><td class="dir"><button class="btn btn--ghost btn--sm">Reenviar convite</button></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="pilha leitura" aria-labelledby="c-perigo">
+    <h2 id="c-perigo">Zona de risco</h2>
+    <div class="aviso aviso--erro"><i data-i="aviso"></i><div class="pilha pilha--sm"><p><b>Excluir uma empresa apaga todas as avaliações, respostas e relatórios dela.</b> Para confirmar, será preciso digitar o nome da empresa.</p><div class="campo"><label for="conf">Digite “Padaria Pão Nobre” para confirmar</label><input class="input" id="conf"></div><button class="btn btn--perigo" style="align-self:flex-start" disabled>Excluir empresa</button></div></div>
+  </section>
+
+  <div class="linha"><button class="btn">Salvar configurações</button></div>
+</main>
+</body></html>

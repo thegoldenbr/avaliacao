@@ -1,0 +1,80 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, nofollow"><title>Editor do relatório — Radar de Desempenho</title><script src="assets/tema.js"></script><link rel="stylesheet" href="assets/mockup.css"><script src="assets/mockup.js" defer></script></head>
+<body data-ativo="avaliacoes">
+<main class="pilha pilha--lg">
+  <header class="pilha">
+    <p class="migalha"><a href="avaliacao-detalhe.html">Metalúrgica Serra Azul</a> <i data-i="dir" data-cls="icone--sm"></i> Relatório</p>
+    <div class="pagina-topo" style="margin-bottom:0">
+      <div><h1>Relatório</h1><p class="linha"><span class="badge badge--aviso">Rascunho</span><span class="muted" role="status"><i data-i="check" data-cls="icone--sm"></i> Salvo às 14:32</span></p></div>
+      <div class="linha">
+        <button class="btn btn--sec"><i data-i="refaz"></i>Regerar com IA</button>
+        <button class="btn">Publicar relatório</button>
+      </div>
+    </div>
+    <div class="aviso aviso--atencao" role="alert"><i data-i="aviso"></i><p><b>Outra pessoa alterou este relatório às 14:35.</b> <a href="#">Carregar a versão mais recente</a> para não perder as mudanças dela.</p></div>
+  </header>
+
+  <div class="editor">
+    <div class="pilha pilha--lg">
+      <section class="pilha" aria-labelledby="e-res">
+        <h2 id="e-res">Resumo executivo</h2>
+        <div>
+          <div class="barra-ferramentas" role="toolbar" aria-label="Formatação"><button class="btn btn--ghost btn--icone btn--sm" aria-label="Negrito"><i data-i="negrito"></i></button><button class="btn btn--ghost btn--icone btn--sm" aria-label="Itálico"><i data-i="italico"></i></button><button class="btn btn--ghost btn--icone btn--sm" aria-label="Lista"><i data-i="lista"></i></button></div>
+          <textarea class="textarea" aria-label="Resumo executivo" style="min-height:140px">A Serra Azul alcançou **7,4 de 10**, avanço de 0,8 ponto sobre a avaliação anterior. Pessoas e Liderança (8,4) e Comercial e Clientes (7,9) sustentam o resultado. Finanças (6,2) e Tecnologia e Inovação (5,9) concentram as maiores oportunidades: melhorar a projeção de caixa é a ação de maior retorno na nota geral.</textarea>
+        </div>
+        <p class="ajuda muted">62 de 120 palavras sugeridas.</p>
+      </section>
+
+      <section class="pilha" aria-labelledby="e-fortes">
+        <h2 id="e-fortes">Pontos fortes</h2>
+        <div>
+          <div class="item-editavel">
+            <span class="alca"><i data-i="alca"></i></span>
+            <div class="pilha pilha--sm"><input class="input" aria-label="Título" value="Liderança que engaja a equipe"><textarea class="textarea" aria-label="Descrição">As notas de Pessoas e Liderança indicam metas conhecidas e feedback frequente, o que sustenta a retenção.</textarea></div>
+            <span class="pilha pilha--sm"><button class="btn btn--ghost btn--icone" aria-label="Subir item"><i data-i="sobe"></i></button><button class="btn btn--ghost btn--icone" aria-label="Remover item"><i data-i="lixo"></i></button></span>
+          </div>
+          <div class="item-editavel">
+            <span class="alca"><i data-i="alca"></i></span>
+            <div class="pilha pilha--sm"><input class="input" aria-label="Título" value="Relação próxima com clientes-chave"><textarea class="textarea" aria-label="Descrição">Comercial e Clientes aparece acima da meta em pós-venda e recorrência de compra.</textarea></div>
+            <span class="pilha pilha--sm"><button class="btn btn--ghost btn--icone" aria-label="Descer item"><i data-i="desce"></i></button><button class="btn btn--ghost btn--icone" aria-label="Remover item"><i data-i="lixo"></i></button></span>
+          </div>
+        </div>
+        <button class="btn btn--ghost btn--sm" style="align-self:flex-start"><i data-i="plus" data-cls="icone--sm"></i>Adicionar item</button>
+      </section>
+
+      <section class="pilha" aria-labelledby="e-rec">
+        <h2 id="e-rec">Recomendações</h2>
+        <div class="item-editavel">
+          <span class="alca"><i data-i="alca"></i></span>
+          <div class="pilha pilha--sm">
+            <input class="input" aria-label="Título" value="Montar projeção de caixa de 13 semanas">
+            <textarea class="textarea" aria-label="Descrição">Consolidar entradas e saídas previstas em uma planilha semanal, revisada toda segunda-feira pela diretoria.</textarea>
+            <div class="form-grade"><div class="campo"><label for="pr">Prioridade</label><select class="select" id="pr"><option>Alta</option></select></div><div class="campo"><label for="hz">Horizonte</label><select class="select" id="hz"><option>Curto prazo</option></select></div></div>
+          </div>
+          <span class="pilha pilha--sm"><button class="btn btn--ghost btn--icone" aria-label="Descer item"><i data-i="desce"></i></button><button class="btn btn--ghost btn--icone" aria-label="Remover item"><i data-i="lixo"></i></button></span>
+        </div>
+      </section>
+
+      <section class="pilha" aria-labelledby="e-op">
+        <h2 id="e-op">Opções de exibição</h2>
+        <label class="interruptor"><span>Comparar com a avaliação anterior</span><input type="checkbox" checked></label>
+        <label class="interruptor"><span>Mostrar a meta no radar</span><input type="checkbox" checked></label>
+        <label class="interruptor"><span>Comparar com a média das empresas <span class="muted">(indisponível: menos de 5 avaliações)</span></span><input type="checkbox" disabled></label>
+        <label class="interruptor"><span>Ocultar “O que evitar”</span><input type="checkbox"></label>
+      </section>
+    </div>
+
+    <aside class="editor-previa pilha" aria-labelledby="e-pv">
+      <div class="linha linha--entre"><h2 id="e-pv">Como o cliente verá</h2><div class="chips"><button class="chip" aria-pressed="true"><i data-i="celular" data-cls="icone--sm"></i>Celular</button><button class="chip" aria-pressed="false"><i data-i="monitor" data-cls="icone--sm"></i>Desktop</button></div></div>
+      <div class="moldura pilha">
+        <div class="marca"><span class="marca-logo" aria-hidden="true">V</span>Vértice Consultoria</div>
+        <p class="muted">Metalúrgica Serra Azul · 2º sem. 2026</p>
+        <div class="nota-destaque"><span class="valor num">7,4</span><span class="de">de 10</span></div>
+        <p class="faixa faixa--bom"><span data-faixa-icone="bom"></span>Bom <span class="variacao variacao--sobe">▲ +0,8</span></p>
+        <div class="radar-host" data-semlegenda="1" data-sem-legenda="1" data-rotulos='["Estratégia","Finanças","Pessoas","Processos","Comercial","Tecnologia"]' data-series='[{"nome":"Atual","tipo":"atual","valores":[7.8,6.2,8.4,7.1,7.9,5.9]},{"nome":"Anterior","tipo":"anterior","valores":[7.0,5.4,7.6,6.5,7.0,4.9]}]'></div>
+        <p class="leitura">A Serra Azul alcançou <b>7,4 de 10</b>, avanço de 0,8 ponto sobre a avaliação anterior…</p>
+      </div>
+      <p class="muted">Ao publicar, o cliente passa a ver exatamente este conteúdo. Depois, use “Atualizar publicação” para enviar mudanças.</p>
+    </aside>
+  </div>
+</main>
+</body></html>

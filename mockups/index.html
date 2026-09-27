@@ -1,0 +1,47 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, nofollow"><title>Mockups — Radar de Desempenho</title><script src="assets/tema.js"></script><link rel="stylesheet" href="assets/mockup.css"><script src="assets/mockup.js" defer></script>
+<style>.ind { max-width: 900px; margin-inline: auto; padding: 2rem 1rem 4rem; } .tela { display: grid; gap: .5rem; padding: .875rem 0; border-top: 1px solid var(--color-border); } @media (min-width: 720px) { .tela { grid-template-columns: 1fr auto; align-items: center; } } .amostra { font-size: 1.125rem; } .amostra .num { font-size: 2.5rem; font-weight: 600; }</style></head>
+<body>
+<main class="ind pilha pilha--lg">
+  <header class="pilha pilha--sm">
+    <h1>Radar de Desempenho — mockups da Fase 0</h1>
+    <p class="muted leitura">Telas navegáveis com dados fictícios. Cada tela abre no visualizador, onde você alterna tema claro/escuro, largura (celular 390 px, tablet, desktop 1440 px) e tipografia. Especificação de cores e componentes em <code>docs/design-system.md</code>.</p>
+    <div class="linha"><button class="btn btn--sec btn--sm" id="tg">Alternar tema desta página</button></div>
+  </header>
+
+  <section aria-labelledby="t-tipo" class="pilha">
+    <h2 id="t-tipo">Tipografia: escolha uma</h2>
+    <div class="grade-2">
+      <div class="cartao amostra" data-fonte-amostra="a"><b>A · IBM Plex Sans</b> (proposta)<p class="num">7,4 <span class="muted" style="font-size:1rem">de 10</span></p><p>Onde a empresa se destaca e onde precisa melhorar: 0123456789.</p><p class="muted">Sóbria e técnica; combina com a linha “relatório”. Tem itálico e números tabulares.</p></div>
+      <div class="cartao amostra" data-fonte-amostra="b"><b>B · Figtree</b> (alternativa)<p class="num">7,4 <span class="muted" style="font-size:1rem">de 10</span></p><p>Onde a empresa se destaca e onde precisa melhorar: 0123456789.</p><p class="muted">Geométrica e mais amigável; deixa o dashboard do cliente mais leve.</p></div>
+    </div>
+    <style>[data-fonte-amostra="a"] { font-family: "IBM Plex Sans", sans-serif; } [data-fonte-amostra="b"] { font-family: "Figtree", sans-serif; }</style>
+  </section>
+
+  <section aria-labelledby="t-tel" class="pilha">
+    <h2 id="t-tel">Telas</h2>
+    <div id="lista"></div>
+  </section>
+</main>
+<script>
+(function () {
+  var G = [
+    ['Acesso', [['login', 'Login']]],
+    ['Área interna', [['inicio', 'Início'], ['empresas', 'Empresas — lista'], ['empresa-cadastro', 'Empresas — cadastro'], ['questionario-editor', 'Editor de questionário'], ['avaliacao-nova', 'Avaliação — criação em etapas'], ['avaliacao-compartilhar', 'Avaliação — compartilhamento'], ['avaliacao-detalhe', 'Detalhe da avaliação, radar e insights'], ['relatorio-editor', 'Editor do relatório'], ['configuracoes', 'Configurações']]],
+    ['Formulário público (empresa avaliada)', [['responder-boas-vindas', 'Boas-vindas'], ['responder-pergunta', 'Pergunta com escala 0–10'], ['responder-revisao', 'Revisão'], ['responder-agradecimento', 'Agradecimento'], ['responder-encerrado', 'Link encerrado e outros estados']]],
+    ['Dashboard do cliente e PDF', [['dashboard-cliente', 'Dashboard do cliente'], ['pdf', 'Página do PDF (A4)']]]
+  ];
+  var h = '';
+  G.forEach(function (g) {
+    h += '<h3 style="margin-top:1.5rem">' + g[0] + '</h3>';
+    g[1].forEach(function (t) {
+      function a(txt, tema, w) { return '<a class="btn btn--sec btn--sm" href="ver.html?tela=' + t[0] + '&tema=' + tema + '&w=' + w + '">' + txt + '</a>'; }
+      h += '<div class="tela"><span>' + t[1] + '</span><span class="linha">' + a('Celular claro', 'claro', 390) + a('Celular escuro', 'escuro', 390) + a('Desktop claro', 'claro', 1440) + a('Desktop escuro', 'escuro', 1440) + '</span></div>';
+    });
+  });
+  document.getElementById('lista').innerHTML = h;
+  document.getElementById('tg').addEventListener('click', function () {
+    var d = document.documentElement; d.dataset.tema = d.dataset.tema === 'escuro' ? 'claro' : 'escuro';
+  });
+})();
+</script>
+</body></html>

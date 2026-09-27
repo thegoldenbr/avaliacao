@@ -1,0 +1,34 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, nofollow"><title>Nova avaliação — Radar de Desempenho</title><script src="assets/tema.js"></script><link rel="stylesheet" href="assets/mockup.css"><script src="assets/mockup.js" defer></script></head>
+<body data-ativo="avaliacoes">
+<main class="pilha pilha--lg">
+  <header>
+    <p class="migalha"><a href="avaliacao-detalhe.html">Avaliações</a> <i data-i="dir" data-cls="icone--sm"></i> Nova avaliação</p>
+    <h1>Nova avaliação</h1>
+  </header>
+  <ol class="passos" aria-label="Etapas">
+    <li class="feito"><b><i data-i="check" data-cls="icone--sm"></i></b>Empresa</li>
+    <li class="feito"><b><i data-i="check" data-cls="icone--sm"></i></b>Questionário</li>
+    <li class="feito"><b><i data-i="check" data-cls="icone--sm"></i></b>Perguntas</li>
+    <li aria-current="step"><b>4</b>Prazo e mensagem</li>
+    <li><b>5</b>Link</li>
+  </ol>
+
+  <form class="pilha pilha--lg leitura" onsubmit="return false">
+    <div class="aviso aviso--info">
+      <i data-i="info"></i>
+      <p><b>Metalúrgica Serra Azul</b> · Maturidade de Gestão · 6 grupos, 30 perguntas</p>
+    </div>
+    <div class="form-grade">
+      <div class="campo"><label for="tit">Título da avaliação</label><input class="input" id="tit" value="Maturidade de Gestão · 2º semestre 2026"></div>
+      <div class="campo"><label for="per">Período de referência</label><input class="input" id="per" value="Jul a dez de 2026"></div>
+      <div class="campo"><label for="prazo">Prazo para responder</label><input class="input" id="prazo" type="date" value="2026-10-09"><span class="ajuda">Encerra às 23h59 de 09/10/2026 (horário de Brasília).</span></div>
+      <div class="campo"><label for="resp">Quem vai responder</label><input class="input" id="resp" value="Roberto Menezes, diretor administrativo"><span class="ajuda">Opcional. O respondente também se identifica no formulário.</span></div>
+      <div class="campo cheio"><label for="msg">Mensagem de apresentação</label><textarea class="textarea" id="msg">Olá, Roberto! Este questionário leva cerca de 15 minutos e ajuda a entender onde a Serra Azul está forte e onde pode evoluir. Responda com sinceridade: não há resposta certa.</textarea></div>
+    </div>
+    <div class="linha">
+      <a class="btn btn--sec" href="avaliacao-nova.html"><i data-i="esq"></i>Voltar</a>
+      <a class="btn" href="avaliacao-compartilhar.html">Gerar link de resposta</a>
+    </div>
+  </form>
+</main>
+</body></html>
