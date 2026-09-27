@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Radar de Desempenho</title>
+    <script>
+      // Aplica o tema antes do primeiro quadro, sem piscar. Escolha manual: 'claro' | 'escuro' | 'sistema'.
+      (function () {
+        var escolha = 'sistema';
+        try { escolha = localStorage.getItem('tema') || 'sistema'; } catch (e) {}
+        var escuro = escolha === 'escuro' || (escolha !== 'claro' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.tema = escuro ? 'escuro' : 'claro';
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="raiz"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

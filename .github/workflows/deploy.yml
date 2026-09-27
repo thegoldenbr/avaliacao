@@ -1,0 +1,57 @@
+name: Deploy no GitHub Pages
+
+# A cada push na main: testa, compila e publica o app (e os mockups em /mockups/).
+# As duas variáveis abaixo são PÚBLICAS (URL do projeto e chave publishable do Supabase).
+# Cadastre em: Settings > Secrets and variables > Actions > aba Variables.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Conferir variáveis do Supabase
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "::error::Cadastre VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY em Settings > Secrets and variables > Actions > Variables."
+            exit 1
+          fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:banco
+      - run: npm run build
+      - name: Incluir os mockups da Fase 0
+        run: cp -r mockups dist/mockups
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

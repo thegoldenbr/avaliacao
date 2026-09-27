@@ -37,10 +37,10 @@ dark_text_secondary: "#94A3B8"
 dark_primary: "#8EA2FF"
 
 ## Tipografia
-font_heading: "IBM Plex Sans — local (@fontsource)"
-font_body: "IBM Plex Sans — local (@fontsource)"
-font_mono: "IBM Plex Mono — local (@fontsource), uso raro"
-# Alternativa em avaliação nos mockups: Figtree (opção B)
+font_heading: "Figtree — local (@fontsource)"
+font_body: "Figtree — local (@fontsource)"
+font_mono: "IBM Plex Mono — local (@fontsource), uso raro (não instalada ainda)"
+# Decisão (2026-09-26): opção B, Figtree. A opção A (IBM Plex Sans) segue nos mockups só para comparação.
 
 ## Layout & Tokens
 border_radius: modern

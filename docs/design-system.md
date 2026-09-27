@@ -53,7 +53,7 @@ Séries do radar: **atual** (primário, sólida, com preenchimento leve), **ante
 | Títulos e corpo | IBM Plex Sans | Figtree |
 | Mono (raro) | IBM Plex Mono | — |
 
-Ambas carregadas localmente no projeto (`@fontsource`); nos mockups vêm do Google Fonts só por conveniência. **Você escolhe A ou B** ao aprovar. Escala: corpo 16 px, títulos 26 / 20 / 17 px, pesos 400, 500, 600. Números sempre com `font-variant-numeric: tabular-nums`. Nota em destaque: 72 px, peso 600.
+Ambas carregadas localmente no projeto (`@fontsource`); nos mockups vêm do Google Fonts só por conveniência. **Decisão: opção B (Figtree)**, aprovada em 26/09/2026. Escala: corpo 16 px, títulos 26 / 20 / 17 px, pesos 400, 500, 600. Números sempre com `font-variant-numeric: tabular-nums`. Nota em destaque: 72 px, peso 600.
 
 ## Espaçamento, forma e densidade
 

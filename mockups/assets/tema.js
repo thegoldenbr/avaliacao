@@ -7,6 +7,6 @@
   }
   var d = document.documentElement;
   d.dataset.tema = t;
-  d.dataset.fonte = p.get('fonte') === 'b' ? 'b' : 'a';
+  d.dataset.fonte = p.get('fonte') === 'a' ? 'a' : 'b';
   d.lang = 'pt-BR';
 })();
