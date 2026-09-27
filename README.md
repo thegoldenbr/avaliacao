@@ -11,7 +11,7 @@ Sistema para uma empresa avaliadora medir o desempenho de outras empresas com qu
 - **Segurança de HTML:** as telas são montadas com o template `html```(`js/html.js`), que escapa tudo que vem do banco (proteção contra XSS).
 - **Design:** [PROJECT_STYLE.md](PROJECT_STYLE.md), [docs/design-system.md](docs/design-system.md) e `css/app.css`. Mockups da Fase 0 em `mockups/` (publicados em `/mockups/`).
 
-> Status: Fases 0 a 3 concluídas em HTML puro (design, base, cadastros, avaliações e formulário público de resposta). Próxima: Fase 4 (indicadores).
+> Status: Fases 0 a 4 concluídas em HTML puro (design, base, cadastros, avaliações, formulário público e indicadores com radar). Próxima: Fase 5 (IA e relatório).
 
 ## Desenvolvimento local
 
@@ -26,6 +26,7 @@ python -m http.server 5173  # ou qualquer servidor estático; abra http://localh
 | `npm run test:banco` | Testa migrations, RLS e RPCs num Postgres em memória (PGlite), sem Docker e sem tocar no Supabase |
 | `npm run paginas` | Regenera os `.html` a partir de `scripts/gerar-paginas.mjs` |
 | `npm run sql:tudo` | Regenera `supabase/instalar_tudo.sql` (migrations + seed) |
+| `npm run compartilhar` | Copia o cálculo de indicadores (`js/lib/indicadores.js`) para `supabase/functions/_shared/` (usado pela Edge Function; um teste confere que são idênticos) |
 | `npm run vendor` | Recopia as bibliotecas e a fonte de `node_modules` |
 
 ## Colocar no ar (3 passos)

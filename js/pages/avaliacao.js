@@ -11,6 +11,7 @@ import { mensagemDeErro } from '../lib/erros.js';
 import { acoesPermitidas, fimDoDia, paraCampoData, prazoEncerrado, statusAoDesarquivar, tituloDaNovaRodada, validarEnvio } from '../lib/avaliacao.js';
 import { ligarCopiar, painelCompartilhar } from './_avaliacao-compartilhar.js';
 import { montarAjustes, totalDePerguntas } from './_avaliacao-perguntas.js';
+import { montarIndicadores, statusTemIndicadores } from './_avaliacao-indicadores.js';
 
 const { main } = await iniciarPagina({ ativo: 'avaliacoes' });
 const id = new URLSearchParams(location.search).get('id');
@@ -101,12 +102,13 @@ function desenhar() {
       : ''}
     ${['respondida', 'em_analise', 'publicada'].includes(av.status)
       ? html`<div class="pilha pilha--sm leitura"><h2>Respostas</h2><p>${total} perguntas respondidas${av.respondido_em ? ` em ${formatarDataHora(av.respondido_em)}` : ''}${av.respondente_nome ? ` por ${av.respondente_nome}${av.respondente_cargo ? `, ${av.respondente_cargo}` : ''}` : ''}.</p>
-        <p class="muted">Indicadores, radar e análise chegam nas próximas fases.</p></div>`
+        </div><div id="indicadores"></div>`
       : ''}
     ${painelAcoes()}
   </section>`);
   if (av.status === 'rascunho') montarAjustes(document.getElementById('ajustes'), av, () => document.getElementById('perguntas-erro') && (document.getElementById('perguntas-erro').hidden = true));
   if (av.status === 'aguardando_resposta') ligarCopiar(main);
+  if (statusTemIndicadores(av.status)) void montarIndicadores(document.getElementById('indicadores'), av);
 }
 
 function dialogoData({ titulo, rotulo, inicial, rotuloConfirmar }) {
