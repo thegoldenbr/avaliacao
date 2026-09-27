@@ -85,7 +85,6 @@ function desenhar() {
         <span class="badge ${TOM_STATUS[av.status] ?? ''}">${ROTULO_STATUS[av.status]}</span></div>
       ${linhaDoTempo()}
     </header>
-    ${statusTemIndicadores(av.status) ? html`<div id="acesso-cliente"></div>` : ''}
     ${av.status === 'rascunho'
       ? html`<ol class="passos" aria-label="Etapas"><li class="feito"><b>${icone('check', 'icone--sm')}</b>Empresa</li><li class="feito"><b>${icone('check', 'icone--sm')}</b>Questionário</li><li aria-current="step"><b>3</b>Perguntas</li><li><b>4</b>Prazo e mensagem</li><li><b>5</b>Link</li></ol>
         <section class="pilha" aria-labelledby="h-perg"><h2 id="h-perg">Perguntas desta avaliação</h2><div id="ajustes"></div></section>${painelSetup()}`
@@ -106,6 +105,7 @@ function desenhar() {
           <a class="btn btn--sec" href="apresentacao.html?id=${av.id}">${icone('monitor', 'icone--sm')}Modo de apresentação</a></div>
         </div><div id="indicadores"></div>`
       : ''}
+    ${statusTemIndicadores(av.status) ? html`<div id="acesso-cliente"></div>` : ''}
     ${painelAcoes()}
   </section>`);
   if (av.status === 'rascunho') montarAjustes(document.getElementById('ajustes'), av, () => document.getElementById('perguntas-erro') && (document.getElementById('perguntas-erro').hidden = true));

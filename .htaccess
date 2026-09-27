@@ -1,0 +1,10 @@
+# Só vale para o Apache do XAMPP (ambiente local). GitHub Pages e Vercel ignoram este arquivo,
+# então isso não muda nada em produção — só evita que o navegador guarde CSS/JS em cache
+# enquanto você testa mudanças em localhost/avaliacao.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+  </FilesMatch>
+</IfModule>

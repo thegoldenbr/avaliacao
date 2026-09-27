@@ -66,8 +66,7 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
     const pin = av.relatorio_senha;
     const link = linkDoRelatorio(av.token_relatorio);
     const texto = `Olá! O relatório de desempenho de ${nome} está disponível neste link: ${link}${pin ? `\nPIN de acesso: ${pin}` : ''}`;
-    raiz.innerHTML = String(html`<section class="pilha pilha--lg" aria-labelledby="h-acesso">
-      <h2 id="h-acesso">Liberações/permissões para o cliente</h2>
+    raiz.innerHTML = String(html`<section class="pilha pilha--lg" aria-label="Liberações/permissões para o cliente">
 
       <div class="cartao pilha" aria-labelledby="h-link"><h3 id="h-link">Link do dashboard do cliente</h3>
         ${publicada()
