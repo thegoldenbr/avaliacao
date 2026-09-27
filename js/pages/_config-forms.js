@@ -18,13 +18,12 @@ async function salvarConfig(patch) {
 }
 
 export function formMarca(raiz, config) {
-  raiz.innerHTML = String(html`<form class="pilha pilha--lg leitura" id="form" novalidate>
-    ${campo({ id: 'nome_empresa', rotulo: 'Nome da empresa', controle: html`<input class="input" id="nome_empresa" maxlength="120" value="${config.nome_empresa}">` })}
-    <div class="pilha pilha--sm">
-      ${campo({ id: 'logo', rotulo: 'Logo', ajuda: 'PNG, JPG, SVG ou WebP, até 1 MB. Aparece no login, no formulário e no relatório.', controle: html`<input class="input" id="logo" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" style="padding-block:.5rem">` })}
-      ${config.logo_url ? html`<img class="logo-atual" src="${config.logo_url}" alt="Logo atual">` : ''}
+  raiz.innerHTML = String(html`<form class="pilha pilha--lg" id="form" novalidate>
+    <div class="form-grade">
+      ${campo({ id: 'nome_empresa', rotulo: 'Nome da empresa', controle: html`<input class="input" id="nome_empresa" maxlength="120" value="${config.nome_empresa}">` })}
+      ${campo({ id: 'cor_destaque', rotulo: 'Cor de destaque', ajuda: 'O sistema ajusta a cor nos temas claro e escuro para manter o contraste de leitura.', controle: html`<div class="linha"><input type="color" class="cor-input" id="cor-seletor" aria-label="Escolher cor" value="${config.cor_destaque.toLowerCase()}"><input class="input num" id="cor_destaque" style="max-width:10rem" value="${config.cor_destaque}"></div>` })}
+      ${campo({ classe: 'cheio', id: 'logo', rotulo: 'Logo', ajuda: 'PNG, JPG, SVG ou WebP, até 1 MB. Aparece no login, no formulário e no relatório.', controle: html`<div class="linha"><input class="input" id="logo" type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" style="padding-block:.5rem;max-width:28rem">${config.logo_url ? html`<img class="logo-atual" src="${config.logo_url}" alt="Logo atual">` : ''}</div>` })}
     </div>
-    ${campo({ id: 'cor_destaque', rotulo: 'Cor de destaque', ajuda: 'O sistema ajusta a cor nos temas claro e escuro para manter o contraste de leitura.', controle: html`<div class="linha"><input type="color" class="cor-input" id="cor-seletor" aria-label="Escolher cor" value="${config.cor_destaque.toLowerCase()}"><input class="input num" id="cor_destaque" style="max-width:10rem" value="${config.cor_destaque}"></div>` })}
     <button class="btn" style="align-self:flex-start" type="submit">Salvar marca</button>
   </form>`);
   const form = raiz.querySelector('#form');
@@ -73,7 +72,7 @@ export function formMarca(raiz, config) {
 
 export function formTextos(raiz, config) {
   const area = (id, rotulo, valor, ajuda) => campo({ id, rotulo, ajuda, controle: html`<textarea class="textarea" id="${id}" maxlength="2000">${valor}</textarea>` });
-  raiz.innerHTML = String(html`<form class="pilha pilha--lg leitura" id="form" novalidate>
+  raiz.innerHTML = String(html`<form class="pilha pilha--lg" id="form" novalidate>
     ${area('texto_apresentacao', 'Apresentação do formulário', config.texto_apresentacao, 'Usada quando a avaliação não tem mensagem própria.')}
     ${area('texto_privacidade', 'Aviso de privacidade', config.texto_privacidade, 'Aparece na abertura do formulário (LGPD).')}
     ${campo({ id: 'texto_rodape', rotulo: 'Rodapé do relatório', controle: html`<input class="input" id="texto_rodape" maxlength="300" value="${config.texto_rodape}">` })}

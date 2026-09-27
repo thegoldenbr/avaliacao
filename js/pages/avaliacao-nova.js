@@ -33,7 +33,7 @@ main.innerHTML = String(html`<section class="pilha pilha--lg">
   </ol>
   ${empresas.length === 0 || questionarios.length === 0
     ? html`<div class="aviso aviso--atencao">${icone('aviso')}<p>${empresas.length === 0 ? html`Cadastre uma <a class="link" href="empresa-form.html">empresa ativa</a>` : html`Crie um <a class="link" href="questionarios.html">questionário</a>`} antes de criar uma avaliação.</p></div>`
-    : html`<form class="pilha pilha--lg leitura" id="form" novalidate>
+    : html`<form class="pilha pilha--lg" id="form" novalidate>
     ${campo({ id: 'empresa', rotulo: 'Empresa avaliada', controle: html`<select class="select" id="empresa"><option value="">Escolha a empresa</option>${empresas.map((e) => html`<option value="${e.id}" ${e.id === empresaInicial ? html`selected` : ''}>${nomeEmpresa(e)}</option>`)}</select>` })}
     <fieldset class="pilha"><legend style="font-weight:500;margin-bottom:.5rem">Questionário</legend>
       ${questionarios.map((q, i) => html`<label class="cartao" style="display:flex;gap:.75rem;align-items:flex-start;cursor:pointer"><input type="radio" name="questionario" value="${q.id}" style="width:20px;height:20px;margin-top:.25rem;accent-color:var(--color-primary)" ${i === 0 && questionarios.length === 1 ? html`checked` : ''}>

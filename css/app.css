@@ -9,8 +9,8 @@
   --color-background: #F8FAFC;
   --color-surface: #FFFFFF;
   --color-surface-alt: #F1F5F9;
-  --color-border: #E2E8F0;
-  --color-border-strong: #CBD5E1;
+  --color-border: #CBD5E1;
+  --color-border-strong: #64748B;
   --color-text: #0F172A;
   --color-text-muted: #536074;
   --color-success: #047857;
@@ -35,8 +35,8 @@
   --color-background: #0F172A;
   --color-surface: #1E293B;
   --color-surface-alt: #172136;
-  --color-border: #334155;
-  --color-border-strong: #475569;
+  --color-border: #475569;
+  --color-border-strong: #8FA0BA;
   --color-text: #F1F5F9;
   --color-text-muted: #A3B1C6;
   --color-success: #34D399;
@@ -282,7 +282,7 @@ details.bloco > .corpo { padding: .25rem 0 1.25rem; display: flex; flex-directio
   .lateral nav a:hover { background: var(--color-surface-alt); color: var(--color-text); }
   .lateral nav a[aria-current="page"] { background: var(--color-primary-soft); color: var(--color-text); font-weight: 600; }
   .lateral .usuario { margin-top: auto; display: flex; flex-direction: column; gap: .25rem; font-size: .875rem; }
-  .principal { padding: 2rem 2.5rem 3rem; width: 100%; }
+  .principal { padding: 2rem 2.5rem 3rem; width: 100%; max-width: none; margin-inline: 0; }
   .nav-baixo { display: none; }
 }
 .pagina-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }

@@ -48,7 +48,7 @@ function linhaDoTempo() {
 
 function painelSetup() {
   const e = av.empresas;
-  return html`<form class="pilha pilha--lg leitura" id="form-setup" novalidate>
+  return html`<form class="pilha pilha--lg" id="form-setup" novalidate>
     <h2>Prazo e mensagem</h2>
     <div class="form-grade">
       ${campo({ id: 'titulo', rotulo: 'Título da avaliação', controle: html`<input class="input" id="titulo" maxlength="160" value="${av.titulo}">` })}
