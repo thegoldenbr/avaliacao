@@ -7,7 +7,7 @@
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 
-const URLS_PERMITIDAS = (Deno.env.get('APP_URLS') ?? 'https://thegoldenbr.github.io/avaliacao/,http://localhost:5173/')
+const URLS_PERMITIDAS = (Deno.env.get('APP_URLS') ?? 'https://thegoldenbr.github.io/avaliacao/,http://localhost:5173/,http://localhost/avaliacao/')
   .split(',')
   .map((u) => u.trim())
   .filter(Boolean);

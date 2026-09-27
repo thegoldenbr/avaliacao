@@ -8,7 +8,7 @@ import { calcularIndicadores, classificar, gerarInsights } from '../_shared/indi
 import { INSTRUCOES_DO_SISTEMA, converterCodigos, esquemaDaFerramenta, montarContexto, validarResultado } from '../_shared/relatorio-ia.js';
 import { ErroDoModelo, chamarModelo, modeloConfigurado } from './llm.ts';
 
-const URLS_PERMITIDAS = (Deno.env.get('APP_URLS') ?? 'https://thegoldenbr.github.io/avaliacao/,http://localhost:5173/')
+const URLS_PERMITIDAS = (Deno.env.get('APP_URLS') ?? 'https://thegoldenbr.github.io/avaliacao/,http://localhost:5173/,http://localhost/avaliacao/')
   .split(',')
   .map((u) => u.trim())
   .filter(Boolean);

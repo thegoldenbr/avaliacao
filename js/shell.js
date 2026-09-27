@@ -128,6 +128,15 @@ export async function iniciarPagina({ ativo, admin = false }) {
     });
     return nuncaResolve();
   }
+  // Senha inicial pendente: nada funciona até trocar (o banco também bloqueia). Segundo login: oferta de PIN.
+  if (perfil.precisa_trocar_senha) {
+    location.replace('trocar-senha.html');
+    return nuncaResolve();
+  }
+  if (perfil.pin_estado === 'segundo_login') {
+    location.replace('pin.html');
+    return nuncaResolve();
+  }
   if (admin && perfil.papel !== 'admin') {
     main.innerHTML = String(html`<h1>Acesso restrito</h1><p class="muted">Esta área é só para administradores.</p>`);
     montarShell({ ativo, perfil, main });

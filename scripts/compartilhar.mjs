@@ -4,7 +4,7 @@
 import { copyFileSync, mkdirSync } from 'node:fs';
 
 mkdirSync('supabase/functions/_shared', { recursive: true });
-for (const arquivo of ['indicadores.js', 'relatorio-ia.js']) {
+for (const arquivo of ['indicadores.js', 'relatorio-ia.js', 'usuarios.js']) {
   copyFileSync(`js/lib/${arquivo}`, `supabase/functions/_shared/${arquivo}`);
 }
-console.log('supabase/functions/_shared atualizado (indicadores.js, relatorio-ia.js).');
+console.log('supabase/functions/_shared atualizado (indicadores.js, relatorio-ia.js, usuarios.js).');

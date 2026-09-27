@@ -43,6 +43,8 @@ mockups/                  mockups da Fase 0 (publicados em /mockups/)
 - **XSS:** toda interpolação passa por `html``; o markdown do relatório escapa HTML antes de formatar e não aceita links nem imagens.
 - **CSP** por `<meta>`: scripts só do próprio site; conexões e imagens só do próprio site e do Supabase; sem `object`.
 - **Edge Functions:** validam o JWT e o perfil; leem os dados com o JWT do usuário (RLS vale); CORS restrito ao domínio do Pages e ao `localhost`; `convidar-usuario` só aceita administradores e endereços de `APP_URLS`.
+- **Contas e PIN:** senha inicial pendente bloqueia todo acesso a dados por RLS (`eh_usuario_ativo` exige `not precisa_trocar_senha`); PIN só existe em tabela sem acesso do navegador (`pins`), com bcrypt e bloqueio por tentativas, acessado apenas pela Edge Function `usuarios` (service_role).
+- **Senha do dashboard:** código numérico aleatório por avaliação, verificado no banco (`obter_relatorio`), com contagem de tentativas e bloqueio; sem a senha o RPC não devolve nenhum conteúdo.
 - **LGPD:** aviso de privacidade no formulário; nenhum dado pessoal do respondente vai para a IA; exclusão de empresa apaga tudo, com confirmação por digitação.
 
 ## Como testar

@@ -42,9 +42,22 @@ A URL do projeto e a chave publishable (públicas) já estão em `js/config.js`,
 
 **Convites:** o admin gera o link em *Configurações > Usuários > Convidar usuário* e o envia por WhatsApp ou e-mail (a função `convidar-usuario` não depende do envio de e-mails do Supabase, que tem limite baixo). Para publicar a função: `npx supabase functions deploy convidar-usuario --use-api`. O link aponta para `aceitar-convite.html`. Ela só aceita os endereços de `APP_URLS` (padrão: o do GitHub Pages e `http://localhost:5173/`); para outro domínio, `npx supabase secrets set APP_URLS="https://seu-dominio/,http://localhost:5173/"`.
 
-**Chave da IA:** você mesmo cadastra, sem colar no chat nem no repositório: *Edge Functions > Secrets* no painel do Supabase, ou no terminal `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-... ANTHROPIC_MODEL=claude-sonnet-5`. Sem a chave, o botão “Gerar com IA” mostra uma mensagem clara e o relatório pode ser escrito à mão. A função `gerar-relatorio` já está publicada (`npx supabase functions deploy gerar-relatorio --use-api` para atualizar).
+**Chave da IA:** você mesmo cadastra, sem colar no chat nem no repositório: *Edge Functions > Secrets* no painel do Supabase, ou no terminal `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-... ANTHROPIC_MODEL=claude-sonnet-5`. Sem a chave, o botão “Gerar com IA” mostra uma mensagem clara e o relatório pode ser escrito à mão. As funções `usuarios`, `convidar-usuario` e `gerar-relatorio` já estão publicadas (`npx supabase functions deploy gerar-relatorio --use-api` para atualizar).
 
 Por CLI (já usado neste projeto): `npx supabase login` (terminal interativo), `npx supabase link --project-ref rbefxbmfyvoaiubpmfwg`, `npx supabase db push` para migrations novas e `npx supabase db query --linked -f supabase/seed.sql` para o seed. 
+
+## Usuários, senhas e PIN
+
+- **Sem e-mail:** em *Configurações > Usuários > Novo usuário*, digite nome e sobrenome. O sistema gera o usuário `nome.sobrenome` (com número se já existir) e a senha inicial `123456`. Passe os dados à pessoa (há botão de copiar e de WhatsApp).
+- **Primeiro acesso:** quem entra com a senha inicial é obrigado a criar uma senha nova (mínimo de 8 caracteres, diferente de `123456`). Até trocar, o banco não deixa ver nem alterar nenhum dado (regra de RLS), mesmo chamando a API direto.
+- **PIN:** no segundo login o sistema pergunta se a pessoa quer cadastrar um PIN de 6 dígitos (sem sequências óbvias). Com PIN, entra com usuário + PIN pela opção “Entrar com PIN”. O PIN é guardado com hash bcrypt e 5 erros bloqueiam o PIN por 15 minutos (a senha continua funcionando). Gerencie em *Mais > Cadastrar/Gerenciar PIN*.
+- **Redefinir:** o administrador pode voltar a senha de qualquer usuário sem e-mail para `123456` (apaga o PIN e exige nova troca).
+- **Com e-mail:** o convite por link continua disponível na mesma tela.
+- O Supabase Auth exige e-mail; quem não tem usa um endereço interno `usuario@radar.local` que nunca recebe mensagens. A senha mínima do projeto no Supabase deve ser 6 ou menos (padrão).
+
+## Senha do dashboard do cliente
+
+No editor do relatório, em *Acesso do cliente*, ligue “Exigir senha”. O sistema gera um código **aleatório de 6 dígitos** (aparece para você copiar e já entra no texto do WhatsApp/e-mail). “Gerar nova senha” troca o número e **a anterior para de funcionar**; o dashboard público volta a pedir a nova senha. 5 erros seguidos bloqueiam o link por 10 minutos. Desligando, o link abre direto.
 
 ## Segurança do banco (resumo)
 

@@ -36,6 +36,8 @@ const PAGINAS = [
   { arquivo: 'login.html', titulo: 'Entrar', js: 'login' },
   { arquivo: 'esqueci-senha.html', titulo: 'Esqueci minha senha', js: 'esqueci-senha' },
   { arquivo: 'redefinir-senha.html', titulo: 'Nova senha', js: 'redefinir-senha' },
+  { arquivo: 'trocar-senha.html', titulo: 'Trocar senha', js: 'trocar-senha' },
+  { arquivo: 'pin.html', titulo: 'PIN', js: 'pin' },
   { arquivo: 'aceitar-convite.html', titulo: 'Convite', js: 'aceitar-convite' },
   { arquivo: 'empresas.html', titulo: 'Empresas', js: 'empresas' },
   { arquivo: 'empresa.html', titulo: 'Empresa', js: 'empresa' },

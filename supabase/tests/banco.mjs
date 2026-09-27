@@ -141,5 +141,75 @@ await db.exec(`reset role`);
 ok((await cont('empresas')) === 2 && (await cont('avaliacoes')) === 3, 'admin exclui empresa e avaliações em cascata (congelamento não bloqueia)');
 ok((await cont('avaliacao_perguntas')) === 90 && (await cont('respostas')) === 90, 'perguntas e respostas da empresa excluída sumiram');
 
+
+// ===== Usuários sem e-mail, PIN e senha do relatório (migration 5) =====
+await db.exec(`reset role`);
+const userPin = (await q(`insert into auth.users(email) values ('paula@x') returning id`))[0].id;
+await db.exec(`insert into public.perfis(id,nome,email,papel,usuario) values ('${userPin}','Paula Souza','paula@x','analista','paula.souza')`);
+
+await db.exec(`set role service_role`);
+ok((await erro(`select public.definir_pin($1,'12345')`, [userPin]))?.includes('pin_invalido'), 'PIN precisa ter 6 dígitos');
+await q(`select public.definir_pin($1,'482913')`, [userPin]);
+ok((await q(`select public.verificar_pin('Paula.Souza','482913') id`))[0].id === userPin, 'PIN correto devolve o usuário (usuário sem diferenciar maiúsculas)');
+ok((await q(`select public.verificar_pin('paula.souza','000000') id`))[0].id === null, 'PIN errado devolve null');
+ok((await q(`select public.verificar_pin('ninguem.aqui','482913') id`))[0].id === null, 'usuário inexistente devolve null (sem revelar)');
+for (let i = 0; i < 4; i++) await q(`select public.verificar_pin('paula.souza','111111') id`);
+ok((await erro(`select public.verificar_pin('paula.souza','482913')`))?.includes('pin_bloqueado'), '5 PINs errados bloqueiam, até o PIN certo');
+await db.exec(`reset role`);
+ok((await num(`select count(*)::int n from public.pins where pin_hash like '$2%'`)) === 1, 'PIN guardado com hash bcrypt, nunca em texto');
+await db.exec(`update public.pins set bloqueado_ate = null`);
+await db.exec(`set role service_role`);
+ok((await q(`select public.verificar_pin('paula.souza','482913') id`))[0].id === userPin, 'após o bloqueio expirar o PIN certo volta a funcionar');
+await q(`select public.remover_pin($1)`, [userPin]);
+ok((await q(`select public.verificar_pin('paula.souza','482913') id`))[0].id === null, 'PIN removido não funciona mais');
+for (const papel of ['anon', 'authenticated']) {
+  await db.exec(`reset role`); await db.exec(`set role ${papel}`);
+  ok((await erro(`select public.verificar_pin('paula.souza','482913')`))?.includes('permission denied'), `${papel} não executa verificar_pin`);
+  ok((await erro(`select * from public.pins`))?.includes('permission denied'), `${papel} não lê a tabela de PINs`);
+}
+
+await db.exec(`reset role`);
+const userForcado = (await q(`insert into auth.users(email) values ('forcado@x') returning id`))[0].id;
+await db.exec(`insert into public.perfis(id,nome,email,papel,usuario,precisa_trocar_senha) values ('${userForcado}','Joao Lima','forcado@x','admin','joao.lima',true)`);
+await como(userForcado);
+ok((await num(`select count(*)::int n from public.empresas`)) === 0, 'senha inicial pendente: não enxerga dados (RLS)');
+ok((await q(`select precisa_trocar_senha p from public.perfis where id='${userForcado}'`))[0].p === true, 'mas consegue ler o próprio perfil para ser redirecionado');
+ok((await erro(`insert into public.empresas(razao_social,cnpj) values ('X','11222333000181')`)) !== null, 'senha inicial pendente: não altera dados');
+await db.exec(`update public.configuracoes set nome_empresa='hack'`);
+await db.exec(`reset role`);
+ok((await q(`select nome_empresa n from public.configuracoes`))[0].n !== 'hack', 'senha inicial pendente: nem admin altera configurações');
+
+// Senha do relatório
+await como(admin);
+const avPub = (await q(`select id from public.avaliacoes where token_relatorio=$1`, [av2.tl]))[0].id;
+const codigo = (await q(`select public.definir_senha_relatorio($1,true) c`, [avPub]))[0].c;
+ok(/^[0-9]{6}$/.test(codigo), 'gera código numérico de 6 dígitos');
+ok((await q(`select public.definir_senha_relatorio($1,true) c`, [avPub]))[0].c === codigo, 'ativar de novo mantém o mesmo código');
+await db.exec(`reset role`); await db.exec(`set role anon`);
+const rel1 = (await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r;
+ok(rel1.protegido === true && !('conteudo' in rel1) && rel1.marca, 'sem senha: só informa que é protegido (sem conteúdo)');
+const errada = codigo === '000000' ? '111111' : '000000';
+ok((await q(`select public.obter_relatorio($1,$2) r`, [av2.tl, errada]))[0].r.erro === 'senha_incorreta', 'senha errada é recusada');
+const rel2 = (await q(`select public.obter_relatorio($1,$2) r`, [av2.tl, codigo]))[0].r;
+ok(rel2.disponivel === true && rel2.conteudo.seed === true, 'senha correta libera o relatório');
+for (let i = 0; i < 4; i++) await q(`select public.obter_relatorio($1,$2) r`, [av2.tl, errada]);
+ok((await q(`select public.obter_relatorio($1,$2) r`, [av2.tl, errada]))[0].r.bloqueado === true, '5 erros bloqueiam o link');
+ok((await q(`select public.obter_relatorio($1,$2) r`, [av2.tl, codigo]))[0].r.bloqueado === true, 'durante o bloqueio nem a senha certa entra');
+ok((await erro(`select public.definir_senha_relatorio($1,true)`, [avPub]))?.includes('permission denied'), 'anon não gera senha');
+await db.exec(`reset role`);
+await db.exec(`update public.avaliacoes set relatorio_bloqueado_ate = null where id='${avPub}'`);
+await como(admin);
+const novoCodigo = (await q(`select public.definir_senha_relatorio($1,true,true) c`, [avPub]))[0].c;
+ok(novoCodigo !== codigo && /^[0-9]{6}$/.test(novoCodigo), 'gerar novo código troca o número');
+await db.exec(`reset role`); await db.exec(`set role anon`);
+ok((await q(`select public.obter_relatorio($1,$2) r`, [av2.tl, codigo]))[0].r.erro === 'senha_incorreta', 'o código antigo para de funcionar');
+ok((await q(`select public.obter_relatorio($1,$2) r`, [av2.tl, novoCodigo]))[0].r.disponivel === true, 'o código novo funciona');
+await como(admin);
+ok((await q(`select public.definir_senha_relatorio($1,false) c`, [avPub]))[0].c === null, 'desligar remove a senha');
+await db.exec(`reset role`); await db.exec(`set role anon`);
+ok((await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r.disponivel === true, 'sem senha configurada o link abre direto, como antes');
+ok((await q(`select public.obter_relatorio('nada') r`))[0].r === null, 'token inexistente continua devolvendo null');
+await db.exec(`reset role`);
+
 console.log(falhas ? `\n${falhas} falha(s)` : '\ntodos os testes passaram');
 process.exit(falhas ? 1 : 0);

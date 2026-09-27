@@ -19,6 +19,8 @@ function desenhar() {
     </div>
     <div class="pilha pilha--sm" style="align-items:flex-start">
       ${perfil.papel === 'admin' ? html`<a class="btn btn--sec" href="configuracoes.html">${icone('ajustes')}Configurações</a>` : ''}
+      <a class="btn btn--sec" href="trocar-senha.html?voluntario=1">${icone('cadeado')}Trocar senha</a>
+      <a class="btn btn--sec" href="pin.html?gerenciar=1">${icone('cadeado')}${perfil.pin_estado === 'ativo' ? 'Gerenciar PIN' : 'Cadastrar PIN'}</a>
       <button type="button" class="btn btn--sec" id="btn-sair-mais">${icone('sair')}Sair</button>
     </div>
   </section>`);
