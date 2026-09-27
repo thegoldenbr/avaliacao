@@ -282,6 +282,12 @@ details.bloco > .corpo { padding: .25rem 0 1.25rem; display: flex; flex-directio
 .app { min-height: 100vh; }
 .lateral { display: none; }
 .principal { padding: 1.25rem 1rem calc(88px + env(safe-area-inset-bottom)); max-width: 1100px; margin-inline: auto; }
+/* Painel branco atrás do conteúdo de cada tela (a página inteira, sem isso, ficava sem contraste contra o fundo cinza-claro). */
+.principal > section {
+  background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 16px;
+  padding: 1.25rem; box-shadow: var(--shadow-pop);
+}
+@media (min-width: 1024px) { .principal > section { padding: 2rem; } }
 .nav-baixo {
   position: fixed; inset: auto 0 0 0; z-index: 20; display: grid; grid-template-columns: repeat(5, 1fr);
   background: var(--color-surface); border-top: 1px solid var(--color-border); padding-bottom: env(safe-area-inset-bottom);
