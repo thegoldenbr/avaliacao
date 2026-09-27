@@ -8,7 +8,7 @@ import { abrirDialogo, confirmar, toast } from '../ui.js';
 import { formatarData, formatarDataHora } from '../lib/formatacao.js';
 import { ROTULO_STATUS, TOM_STATUS } from '../lib/status.js';
 import { mensagemDeErro } from '../lib/erros.js';
-import { acoesPermitidas, fimDoDia, paraCampoData, prazoEncerrado, statusAoDesarquivar, tituloDaNovaRodada, validarEnvio } from '../lib/avaliacao.js';
+import { acoesPermitidas, fimDoDia, paraCampoData, prazoEncerrado, tituloDaNovaRodada, validarEnvio } from '../lib/avaliacao.js';
 import { ligarCopiar, painelCompartilhar } from './_avaliacao-compartilhar.js';
 import { montarAjustes, totalDePerguntas } from './_avaliacao-perguntas.js';
 import { montarIndicadores, statusTemIndicadores } from './_avaliacao-indicadores.js';
@@ -43,8 +43,7 @@ async function atualizar(patch, mensagemErro = 'Não foi possível salvar a alte
 function linhaDoTempo() {
   const datas = { rascunho: av.criado_em, aguardando_resposta: av.enviado_em, respondida: av.respondido_em, publicada: av.publicado_em };
   const atual = ETAPAS.indexOf(av.status);
-  return html`<ol class="tempo" aria-label="Status da avaliação">${ETAPAS.map((s, i) => html`<li class="${i < atual ? 'feito' : ''}" ${i === atual ? html`aria-current="step"` : ''}><span class="pt"></span>${ROTULO_STATUS[s]}${datas[s] && i <= atual ? html` <span class="muted">(${formatarData(datas[s])})</span>` : ''}</li>`)}</ol>
-    ${av.status === 'arquivada' ? html`<p><span class="badge">Arquivada</span></p>` : ''}`;
+  return html`<ol class="tempo" aria-label="Status da avaliação">${ETAPAS.map((s, i) => html`<li class="${i < atual ? 'feito' : ''}" ${i === atual ? html`aria-current="step"` : ''}><span class="pt"></span>${ROTULO_STATUS[s]}${datas[s] && i <= atual ? html` <span class="muted">(${formatarData(datas[s])})</span>` : ''}</li>`)}</ol>`;
 }
 
 function painelSetup() {
@@ -59,8 +58,7 @@ function painelSetup() {
       ${campo({ id: 'mensagem_apresentacao', rotulo: 'Mensagem de apresentação', classe: 'cheio', ajuda: 'Vazio usa o texto padrão das configurações.', controle: html`<textarea class="textarea" id="mensagem_apresentacao" maxlength="1000">${av.mensagem_apresentacao ?? ''}</textarea>` })}
     </div>
     <p class="erro" id="perguntas-erro" role="alert" hidden></p>
-    <div class="linha"><button class="btn btn--sec" type="button" id="salvar-rascunho">Salvar rascunho</button><button class="btn" type="submit">Gerar link e enviar</button>
-      <button class="btn btn--ghost" type="button" id="excluir-rascunho">${icone('lixo', 'icone--sm')}Excluir rascunho</button></div>
+    <div class="linha"><button class="btn btn--sec" type="button" id="salvar-rascunho">Salvar rascunho</button><button class="btn" type="submit">Gerar link e enviar</button></div>
   </form>`;
 }
 
@@ -71,8 +69,6 @@ function painelAcoes() {
     p.reabrir && ['reabrir', 'editar', 'Reabrir para nova resposta'],
     p.novaRodada && av.questionario_origem_id && ['rodada', 'plus', 'Nova rodada'],
     p.regenerarLink && ['regenerar', 'copia', 'Gerar novo link'],
-    p.arquivar && ['arquivar', 'arquivo', 'Arquivar'],
-    p.desarquivar && ['desarquivar', 'arquivo', 'Desarquivar'],
   ].filter(Boolean);
   return botoes.length ? html`<div class="linha">${botoes.map(([a, ic, r]) => html`<button class="btn btn--sec" data-acao="${a}">${icone(ic, 'icone--sm')}${r}</button>`)}</div>` : '';
 }
@@ -165,8 +161,6 @@ async function acao(nome) {
     toast('Novo link gerado.');
     desenhar();
   }
-  if (nome === 'arquivar' && (await confirmar({ titulo: 'Arquivar avaliação', descricao: 'A avaliação sai das listas ativas e o link de resposta deixa de funcionar. Você pode desarquivar depois.', rotuloConfirmar: 'Arquivar' })) && (await atualizar({ status: 'arquivada' }))) desenhar();
-  if (nome === 'desarquivar' && (await atualizar({ status: statusAoDesarquivar(av.respondido_em) }))) desenhar();
   if (nome === 'rodada') {
     const { data, error } = await supabase.rpc('criar_avaliacao', {
       p_empresa_id: av.empresa_id, p_questionario_id: av.questionario_origem_id, p_titulo: tituloDaNovaRodada(av.titulo), p_periodo: null, p_prazo: null, p_mensagem: av.mensagem_apresentacao, p_anterior_id: av.id,
@@ -189,12 +183,6 @@ main.addEventListener('click', async (e) => {
     const { patch } = lerSetup();
     if (!patch.titulo) return mostrarErros(main, { titulo: 'Informe o título da avaliação.' }, ['titulo']);
     if (await atualizar(patch)) toast('Rascunho salvo.');
-  }
-  if (e.target.closest('#excluir-rascunho')) {
-    if (!(await confirmar({ titulo: 'Excluir rascunho', descricao: 'A avaliação e a cópia das perguntas serão apagadas. Não dá para desfazer.' }))) return;
-    const { error } = await supabase.from('avaliacoes').delete().eq('id', av.id);
-    if (error) return toast(mensagemDeErro(error, 'Não foi possível excluir.'), 'erro');
-    location.replace('avaliacoes.html');
   }
 });
 

@@ -38,6 +38,11 @@ console.log('seed aplicado');
 
 const cont = (t) => num(`select count(*)::int n from public.${t}`);
 ok((await cont('questionarios')) === 1 && (await cont('grupos')) === 6 && (await cont('perguntas')) === 30, 'seed: 1 questionário, 6 grupos, 30 perguntas');
+
+ok(
+  (await erro(`insert into public.avaliacoes (empresa_id, titulo, status) select id, 'x', 'arquivada' from public.empresas limit 1`))?.includes('avaliacoes_status_check'),
+  '"arquivada" não é mais um status válido (sem arquivar/desarquivar nem exclusão direta)',
+);
 ok((await cont('empresas')) === 3 && (await cont('avaliacoes')) === 4, 'seed: 3 empresas, 4 avaliações');
 ok((await cont('avaliacao_perguntas')) === 120, 'snapshot: 4 x 30 perguntas copiadas');
 ok((await cont('respostas')) === 30 * 3 + 12, 'seed: respostas 3 completas + 12 de rascunho');
@@ -220,13 +225,18 @@ ok((await q(`select public.liberar_relatorio($1,false) t`, [avPub]))[0].t === nu
 await db.exec(`reset role`); await db.exec(`set role anon`);
 ok((await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r.liberado === false, 'depois de revogar, o link volta a ficar travado');
 
-// Modo de apresentação para o cliente: só pode ser liberado depois do dashboard, e revogar o dashboard revoga os dois.
+// Modo de apresentação para o cliente: só pode ser liberado depois que o dashboard foi liberado e o
+// operador já abriu o modo de apresentação (apresentacao_realizada_em); revogar o dashboard revoga os dois.
 await como(admin);
 let apErro = null;
 try { await q(`select public.liberar_apresentacao_cliente($1,true) t`, [avPub]); } catch (e) { apErro = e; }
-ok(apErro?.message?.includes('relatorio_nao_liberado'), 'não dá para liberar a apresentação antes do dashboard');
+ok(apErro?.message?.includes('nao_liberavel'), 'não dá para liberar a apresentação antes do dashboard nem de apresentar');
 await q(`select public.liberar_relatorio($1,true) t`, [avPub]);
-ok((await q(`select public.liberar_apresentacao_cliente($1,true) t`, [avPub]))[0].t !== null, 'com o dashboard liberado, a apresentação pode ser liberada');
+apErro = null;
+try { await q(`select public.liberar_apresentacao_cliente($1,true) t`, [avPub]); } catch (e) { apErro = e; }
+ok(apErro?.message?.includes('nao_liberavel'), 'com o dashboard liberado mas sem ter apresentado ainda, continua bloqueado');
+await db.exec(`update public.avaliacoes set apresentacao_realizada_em = now() where id = '${avPub}'`);
+ok((await q(`select public.liberar_apresentacao_cliente($1,true) t`, [avPub]))[0].t !== null, 'com o dashboard liberado e já tendo apresentado, a apresentação pode ser liberada');
 await db.exec(`reset role`); await db.exec(`set role anon`);
 ok((await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r.apresentacao_liberada === true, 'o link público informa que a apresentação está liberada');
 await como(admin);

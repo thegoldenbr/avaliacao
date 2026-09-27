@@ -19,7 +19,7 @@ main.innerHTML = String(html`<section class="pilha pilha--lg">
 const alvo = document.getElementById('resumo');
 try {
   const avaliacoes = dados(
-    await supabase.from('avaliacoes').select('id, titulo, status, respondido_em, criado_em, empresas(nome_fantasia, razao_social)').neq('status', 'arquivada').order('criado_em', { ascending: false }),
+    await supabase.from('avaliacoes').select('id, titulo, status, respondido_em, criado_em, empresas(nome_fantasia, razao_social)').order('criado_em', { ascending: false }),
   );
   const contagem = (s) => avaliacoes.filter((a) => a.status === s).length;
   const acao = avaliacoes.filter((a) => a.status === 'respondida');

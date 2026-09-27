@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { acoesPermitidas, fimDoDia, linkEmail, linkWhatsApp, minutosEstimados, paraCampoData, prazoEncerrado, statusAoDesarquivar, telefoneParaWhatsApp, tituloDaNovaRodada, validarEnvio } from './avaliacao.js';
+import { acoesPermitidas, fimDoDia, linkEmail, linkWhatsApp, minutosEstimados, paraCampoData, prazoEncerrado, telefoneParaWhatsApp, tituloDaNovaRodada, validarEnvio } from './avaliacao.js';
 
 test('fim do dia escolhido, no fuso do navegador', () => {
   const d = fimDoDia('2026-10-09');
@@ -40,8 +40,6 @@ test('ações permitidas por status', () => {
   assert.equal(acoesPermitidas('aguardando_resposta').estenderPrazo, true);
   assert.equal(acoesPermitidas('respondida').reabrir, true);
   assert.equal(acoesPermitidas('publicada').novaRodada, true);
-  assert.equal(acoesPermitidas('arquivada').desarquivar, true);
-  assert.equal(acoesPermitidas('arquivada').arquivar, false);
   assert.equal(acoesPermitidas('rascunho').regenerarLink, false);
 });
 
@@ -53,9 +51,7 @@ test('validação do envio', () => {
   assert.ok(validarEnvio({ totalPerguntas: 5, prazo: '2026-05-01T23:59:59' }, agora).prazo);
 });
 
-test('desarquivar e nova rodada', () => {
-  assert.equal(statusAoDesarquivar('2026-01-01'), 'respondida');
-  assert.equal(statusAoDesarquivar(null), 'rascunho');
+test('título da nova rodada', () => {
   assert.equal(tituloDaNovaRodada('Maturidade · 2026'), 'Maturidade · 2026 (rodada 2)');
   assert.equal(tituloDaNovaRodada('Maturidade (rodada 2)'), 'Maturidade (rodada 3)');
 });

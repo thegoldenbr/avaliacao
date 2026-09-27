@@ -32,6 +32,9 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
     if (!av.relatorio_liberado_em) {
       return html`<div class="aviso" role="status">${icone('cadeado')}<p><b>Modo de apresentação travado.</b> Libere primeiro o dashboard do cliente, acima, para depois poder liberar o modo de apresentação.</p></div>`;
     }
+    if (!av.apresentacao_realizada_em) {
+      return html`<div class="aviso" role="status">${icone('cadeado')}<p><b>Modo de apresentação travado.</b> Abra o "Modo de apresentação" pelo menos uma vez, na página da avaliação, para apresentar o resultado ao cliente. Depois disso você pode liberar esse modo para ele, se quiser.</p></div>`;
+    }
     return av.apresentacao_liberada_em
       ? html`<div class="aviso aviso--ok" role="status">${icone('ok')}<div class="pilha pilha--sm"><p><b>Modo de apresentação liberado</b> desde ${formatarDataHora(av.apresentacao_liberada_em)}. O cliente vê o botão "Modo de apresentação" no dashboard dele.</p>
           <div><button class="btn btn--sec btn--sm" data-acesso="revogar-apresentacao">${icone('cadeado', 'icone--sm')}Revogar modo de apresentação</button></div></div></div>`
@@ -44,7 +47,8 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
     const link = linkDoRelatorio(av.token_relatorio);
     const texto = `Olá! O relatório de desempenho de ${nome} está disponível neste link: ${link}${pin ? `\nPIN de acesso: ${pin}` : ''}`;
     raiz.innerHTML = String(html`<section class="cartao pilha pilha--lg" aria-labelledby="h-acesso">
-      <div class="pilha"><h2 id="h-acesso">Link público do dashboard do cliente</h2>
+      <h2 id="h-acesso">Liberações/permissões para o cliente</h2>
+      <div class="pilha"><h3>Dashboard do cliente</h3>
         ${publicada() ? liberacao() : ''}
         ${publicada()
           ? html`<div class="link-copia"><input class="input" id="link-relatorio" readonly aria-label="Link do relatório" value="${link}"><button class="btn btn--sec btn--icone" data-acesso="copiar-link" aria-label="Copiar link">${icone('copia')}</button></div>

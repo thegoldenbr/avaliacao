@@ -18,3 +18,7 @@ if (!av || !statusTemIndicadores(av.status)) {
 const { snapshot, marca, rodape } = await obterSnapshotAtual(av);
 document.title = `Apresentação — ${snapshot.empresa}`;
 montarApresentacao(main, { snapshot, marca, rodape, sair: `avaliacao.html?id=${av.id}` });
+
+// Marca que o operador já apresentou: condição para depois poder liberar o modo de apresentação ao cliente.
+// Sem then()/await a chamada nunca sai (o builder do Supabase só executa quando "resolvido").
+if (!av.apresentacao_realizada_em) supabase.from('avaliacoes').update({ apresentacao_realizada_em: new Date().toISOString() }).eq('id', av.id).then(() => {});

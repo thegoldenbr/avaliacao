@@ -55,9 +55,7 @@ export function acoesPermitidas(status) {
     compartilhar: status === 'aguardando_resposta',
     estenderPrazo: status === 'aguardando_resposta',
     reabrir: ['respondida', 'em_analise', 'publicada'].includes(status),
-    novaRodada: ['respondida', 'em_analise', 'publicada', 'arquivada'].includes(status),
-    arquivar: status !== 'arquivada',
-    desarquivar: status === 'arquivada',
+    novaRodada: ['respondida', 'em_analise', 'publicada'].includes(status),
     regenerarLink: status !== 'rascunho',
   };
 }
@@ -70,9 +68,6 @@ export function validarEnvio({ totalPerguntas, prazo }, agora = new Date()) {
   else if (prazoEncerrado(prazo, agora)) erros.prazo = 'O prazo precisa ser hoje ou uma data futura.';
   return erros;
 }
-
-/** Status de destino ao desarquivar. */
-export const statusAoDesarquivar = (respondidoEm) => (respondidoEm ? 'respondida' : 'rascunho');
 
 /** Título sugerido para uma nova rodada a partir do título anterior. */
 export function tituloDaNovaRodada(tituloAnterior) {
