@@ -5,6 +5,7 @@
  * Com menos de 3 eixos, usa barras horizontais.
  */
 import { esc, html, raw } from './html.js';
+import { icone } from './icones.js';
 import { formatarNota } from './lib/formatacao.js';
 
 const ESTILOS = {
@@ -16,6 +17,7 @@ const ESTILOS = {
 
 const CENTRO = 200;
 const RAIO = 128;
+let proximoId = 0;
 
 function legenda(series) {
   return html`<ul class="legenda">${series.map((s) => html`<li><svg viewBox="0 0 32 8" aria-hidden="true"><line x1="0" y1="4" x2="32" y2="4" stroke="${ESTILOS[s.tipo].cor}" stroke-width="3" stroke-dasharray="${ESTILOS[s.tipo].tracejado}"/></svg>${s.nome}</li>`)}</ul>`;
@@ -43,12 +45,29 @@ function barras(rotulos, series) {
 export function radar(rotulos, series, { animar = false, titulo = 'Radar de desempenho por grupo, escala de 0 a 10', semLegenda = false } = {}) {
   if (rotulos.length < 3) return html`${barras(rotulos, series)}${semLegenda ? '' : legenda(series)}${tabelaParaLeitores(rotulos, series)}`;
 
+  const idBase = `radar${proximoId++}`;
   const n = rotulos.length;
   const ponto = (i, v) => {
     const angulo = -Math.PI / 2 + (2 * Math.PI * i) / n;
     return [CENTRO + Math.cos(angulo) * RAIO * (v / 10), CENTRO + Math.sin(angulo) * RAIO * (v / 10)];
   };
   const poligono = (v) => rotulos.map((_, i) => ponto(i, v).map((c) => c.toFixed(1)).join(',')).join(' ');
+  // Efeito "3D": disco com gradiente radial (parece uma cúpula) por baixo dos anéis, e sombra suave sob a
+  // série atual e os pontos, para dar profundidade sem prejudicar a leitura (nada de texto inclinado).
+  const defs = `<defs>
+    <radialGradient id="${idBase}-disco" cx="50%" cy="42%" r="65%">
+      <stop offset="0%" stop-color="var(--color-surface)"/>
+      <stop offset="100%" stop-color="var(--color-surface-alt)"/>
+    </radialGradient>
+    <linearGradient id="${idBase}-preenchido" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="var(--color-primary)" stop-opacity=".38"/>
+      <stop offset="100%" stop-color="var(--color-primary)" stop-opacity=".12"/>
+    </linearGradient>
+    <filter id="${idBase}-sombra" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0F172A" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <polygon class="disco" points="${poligono(10)}" fill="url(#${idBase}-disco)"/>`;
   const aneis = [2, 4, 6, 8, 10].map((v) => `<polygon class="anel${v === 10 ? ' anel--fora' : ''}" points="${poligono(v)}"/>`).join('');
   const eixos = rotulos.map((_, i) => { const [x, y] = ponto(i, 10); return `<line class="eixo" x1="${CENTRO}" y1="${CENTRO}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; }).join('');
   const escala = [0, 5, 10].map((v) => `<text class="escala-txt" x="${CENTRO + 4}" y="${CENTRO - (RAIO * v) / 10 + 4}">${v}</text>`).join('');
@@ -56,11 +75,15 @@ export function radar(rotulos, series, { animar = false, titulo = 'Radar de dese
   const ordem = ['media', 'meta', 'anterior', 'atual'];
   const desenhadas = [...series].sort((a, b) => ordem.indexOf(a.tipo) - ordem.indexOf(b.tipo));
   const formas = desenhadas
-    .map((s) => `<polygon class="serie ${ESTILOS[s.tipo].classe}" points="${s.valores.map((v, i) => ponto(i, v ?? 0).map((c) => c.toFixed(1)).join(',')).join(' ')}"/>`)
+    .map((s) => {
+      const pts = s.valores.map((v, i) => ponto(i, v ?? 0).map((c) => c.toFixed(1)).join(',')).join(' ');
+      const extra = s.tipo === 'atual' ? ` fill="url(#${idBase}-preenchido)" filter="url(#${idBase}-sombra)"` : '';
+      return `<polygon class="serie ${ESTILOS[s.tipo].classe}" points="${pts}"${extra}/>`;
+    })
     .join('');
   const atual = series.find((s) => s.tipo === 'atual');
   const pontos = atual
-    ? atual.valores.map((v, i) => (v == null ? '' : `<circle class="ponto" cx="${ponto(i, v)[0].toFixed(1)}" cy="${ponto(i, v)[1].toFixed(1)}" r="6"/>`)).join('')
+    ? atual.valores.map((v, i) => (v == null ? '' : `<circle class="ponto" cx="${ponto(i, v)[0].toFixed(1)}" cy="${ponto(i, v)[1].toFixed(1)}" r="6" filter="url(#${idBase}-sombra)"/>`)).join('')
     : '';
   const textos = rotulos
     .map((r, i) => {
@@ -83,8 +106,12 @@ export function radar(rotulos, series, { animar = false, titulo = 'Radar de dese
       return `<circle class="radar-alvo" data-info="${dados}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="26" aria-hidden="true"/>`;
     })
     .join('');
-  const svg = `<svg class="radar${animar ? ' radar--anima' : ''}" viewBox="-70 0 540 400" role="img" aria-label="${titulo}">${aneis}${eixos}${escala}${formas}${pontos}${textos}${alvos}</svg>`;
-  return html`<div class="radar-caixa">${raw(svg)}<div class="radar-dica" role="tooltip" hidden></div></div>${semLegenda ? '' : legenda(series)}${tabelaParaLeitores(rotulos, series)}`;
+  const svg = `<svg class="radar${animar ? ' radar--anima' : ''}" viewBox="-70 0 540 400" role="img" aria-label="${titulo}">${defs}${aneis}${eixos}${escala}${formas}${pontos}${textos}${alvos}</svg>`;
+  return html`<div class="radar-caixa">
+    ${raw(svg)}
+    <div class="radar-dica" role="tooltip" hidden></div>
+    <button type="button" class="btn btn--sec btn--icone radar-expandir" aria-label="Ampliar o gráfico" title="Ampliar">${icone('expandir', 'icone--sm')}</button>
+  </div>${semLegenda ? '' : legenda(series)}${tabelaParaLeitores(rotulos, series)}`;
 }
 
 let ligado = false;
@@ -127,6 +154,36 @@ function ativar() {
     const alvo = e.target.closest('.radar-alvo');
     if (alvo) return mostrar(alvo);
     document.querySelectorAll('.radar-dica').forEach((d) => (d.hidden = true));
+  });
+
+  // Botão de ampliar: o gráfico ocupa a tela toda (Esc ou o próprio botão fecha).
+  function fechar(caixa) {
+    caixa.classList.remove('radar-caixa--expandida');
+    document.body.classList.remove('radar-travar-scroll');
+    const botao = caixa.querySelector('.radar-expandir');
+    botao.innerHTML = icone('expandir', 'icone--sm').toString();
+    botao.setAttribute('aria-label', 'Ampliar o gráfico');
+    botao.title = 'Ampliar';
+  }
+  function abrir(caixa) {
+    caixa.classList.add('radar-caixa--expandida');
+    document.body.classList.add('radar-travar-scroll');
+    const botao = caixa.querySelector('.radar-expandir');
+    botao.innerHTML = icone('encolher', 'icone--sm').toString();
+    botao.setAttribute('aria-label', 'Fechar a ampliação');
+    botao.title = 'Fechar';
+    botao.focus();
+  }
+  document.addEventListener('click', (e) => {
+    const botao = e.target.closest('.radar-expandir');
+    if (!botao) return;
+    const caixa = botao.closest('.radar-caixa');
+    caixa.classList.contains('radar-caixa--expandida') ? fechar(caixa) : abrir(caixa);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const caixa = document.querySelector('.radar-caixa--expandida');
+    if (caixa) fechar(caixa);
   });
 }
 ativar();

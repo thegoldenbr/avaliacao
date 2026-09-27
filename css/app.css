@@ -236,14 +236,15 @@ details.bloco > .corpo { padding: .25rem 0 1.25rem; display: flex; flex-directio
 .recomendacao .meta { display: flex; gap: .5rem; flex-wrap: wrap; }
 
 /* Radar */
-.radar { width: 100%; max-width: 460px; margin-inline: auto; display: block; }
+.radar { width: 100%; max-width: 552px; margin-inline: auto; display: block; }
 .radar text { fill: var(--color-text); font-size: 14px; font-family: var(--font-sans); }
 .radar .anel { fill: none; stroke: var(--color-border); stroke-width: 1; }
 .radar .anel--fora { stroke: var(--color-border-strong); }
 .radar .eixo { stroke: var(--color-border); stroke-width: 1; }
 .radar .escala-txt { fill: var(--color-text-muted); font-size: 11px; }
 .radar .serie { transform-origin: 200px 200px; }
-.radar .serie--atual { fill: color-mix(in srgb, var(--color-primary) 20%, transparent); stroke: var(--color-primary); stroke-width: 2.5; }
+.radar .serie--atual { stroke: var(--color-primary); stroke-width: 2.5; stroke-linejoin: round; }
+.radar .disco { stroke: none; }
 .radar .serie--anterior { fill: none; stroke: var(--serie-anterior); stroke-width: 2; stroke-dasharray: 7 5; }
 .radar .serie--meta { fill: none; stroke: var(--serie-meta); stroke-width: 2; stroke-dasharray: 2 5; stroke-linecap: round; }
 .radar .serie--media { fill: none; stroke: var(--serie-media); stroke-width: 2; stroke-dasharray: 10 4 2 4; }
@@ -252,6 +253,14 @@ details.bloco > .corpo { padding: .25rem 0 1.25rem; display: flex; flex-directio
 .radar .radar-alvo:hover, .radar .radar-alvo:focus-visible { fill: color-mix(in srgb, var(--color-primary) 14%, transparent); outline: none; }
 
 .radar-caixa { position: relative; }
+.radar-expandir { position: absolute; top: 0; right: 0; }
+body.radar-travar-scroll { overflow: hidden; }
+.radar-caixa--expandida {
+  position: fixed; inset: 0; z-index: 60; background: var(--color-surface);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1.5rem;
+}
+.radar-caixa--expandida .radar { max-width: min(88vmin, 900px); }
+.radar-caixa--expandida .radar-expandir { top: 1.5rem; right: 1.5rem; }
 .radar-dica {
   position: absolute; transform: translate(-50%, calc(-100% - 14px)); min-width: 9rem; max-width: 14rem;
   background: var(--color-surface); border: 1px solid var(--color-border-strong); border-radius: var(--radius-sm);

@@ -66,10 +66,10 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
     const pin = av.relatorio_senha;
     const link = linkDoRelatorio(av.token_relatorio);
     const texto = `Olá! O relatório de desempenho de ${nome} está disponível neste link: ${link}${pin ? `\nPIN de acesso: ${pin}` : ''}`;
-    raiz.innerHTML = String(html`<section class="cartao pilha pilha--lg" aria-labelledby="h-acesso">
+    raiz.innerHTML = String(html`<section class="pilha pilha--lg" aria-labelledby="h-acesso">
       <h2 id="h-acesso">Liberações/permissões para o cliente</h2>
-      <div class="pilha"><h3>Dashboard do cliente</h3>
-        ${publicada() ? liberacao() : ''}
+
+      <div class="cartao pilha" aria-labelledby="h-link"><h3 id="h-link">Link do dashboard do cliente</h3>
         ${publicada()
           ? html`<div class="link-copia"><input class="input" id="link-relatorio" readonly aria-label="Link do relatório" value="${link}"><button class="btn btn--sec btn--icone" data-acesso="copiar-link" aria-label="Copiar link">${icone('copia')}</button></div>
             <div class="linha" style="align-items:flex-start;gap:1.5rem">${qrSvg(link, 'QR code do relatório')}
@@ -81,7 +81,8 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
             <p class="muted">Publicado em ${av.publicado_em ? formatarData(av.publicado_em) : '—'}. Se o link vazar, gere outro: o anterior deixa de funcionar.</p>`
           : html`<p class="aviso aviso--atencao" role="status">${icone('aviso')}<span>O relatório ainda não foi publicado, então o link não abre para o cliente. Publique pelo editor do relatório.</span></p>`}
       </div>
-      <div class="pilha pilha--sm" style="border-top:1px solid var(--color-border);padding-top:1rem"><h3>PIN de acesso</h3>
+
+      <div class="cartao pilha" aria-labelledby="h-pin"><h3 id="h-pin">PIN de acesso</h3>
         <label class="interruptor"><span>Exigir PIN de 6 dígitos para abrir o dashboard</span><input type="checkbox" id="pin-ativo" ${pin ? html`checked` : ''}></label>
         ${pin
           ? html`<div class="linha"><span class="muted">PIN atual:</span><b class="num" id="pin-codigo" style="font-size:1.75rem;letter-spacing:.2em">${pin}</b>
@@ -90,7 +91,12 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
             <p class="muted">Envie o PIN ao cliente junto com o link. Ao gerar um novo PIN, o anterior para de funcionar e o cliente precisa digitar o novo. 5 erros seguidos bloqueiam o link por 10 minutos.</p>`
           : html`<p class="muted">Sem PIN, qualquer pessoa com o link abre o dashboard.</p>`}
       </div>
-      <div class="pilha pilha--sm" style="border-top:1px solid var(--color-border);padding-top:1rem"><h3>Modo de apresentação para o cliente</h3>
+
+      <div class="pilha pilha--sm"><h3 style="margin-bottom:0">Liberação para o cliente</h3><p class="muted" style="margin-top:0">Duas liberações separadas: o dashboard em si, e o modo de apresentação em tela cheia.</p></div>
+      <div class="cartao pilha" aria-labelledby="h-lib-dashboard"><h4 id="h-lib-dashboard">Dashboard do cliente</h4>
+        ${publicada() ? liberacao() : html`<p class="muted">Publique o relatório para poder liberar o dashboard.</p>`}
+      </div>
+      <div class="cartao pilha" aria-labelledby="h-lib-apresentacao"><h4 id="h-lib-apresentacao">Modo de apresentação</h4>
         <p class="muted">Além do dashboard, o cliente pode abrir os mesmos dados em tela cheia, slide a slide — a mesma apresentação que você usa aqui dentro.</p>
         ${liberacaoApresentacao()}
       </div>
