@@ -8,7 +8,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "tipos": "supabase gen types typescript --project-id rbefxbmfyvoaiubpmfwg --schema public > src/lib/database.types.ts",
+    "tipos": "supabase gen types typescript --linked --schema public > src/lib/database.types.ts.tmp && node -e \"require('fs').renameSync('src/lib/database.types.ts.tmp','src/lib/database.types.ts')\"",
     "typecheck": "tsc --noEmit",
     "test:banco": "node supabase/tests/banco.mjs",
     "sql:tudo": "node scripts/gerar-sql.mjs"
