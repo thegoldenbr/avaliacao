@@ -447,3 +447,7 @@ summary.mais { display: flex; align-items: center; min-height: 44px; cursor: poi
 .grupo-q > header { align-items: flex-start; }
 .grupo-q .acoes-grupo { margin-left: auto; }
 .alca { background: none; border: 0; }
+
+.qr svg { width: 100%; height: 100%; display: block; }
+.link-copia { display: flex; gap: .5rem; }
+.link-copia .input { font-size: .875rem; }

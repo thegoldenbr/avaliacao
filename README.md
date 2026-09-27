@@ -7,11 +7,11 @@ Sistema para uma empresa avaliadora medir o desempenho de outras empresas com qu
 - **Páginas:** cada tela é um arquivo `.html` na raiz (`index.html`, `empresas.html`, `questionario.html`…) com um módulo em `js/pages/`. O GitHub Pages serve os arquivos como estão; abrir a pasta com qualquer servidor estático já basta para desenvolver.
 - **Sem CDN:** as bibliotecas (`vendor/supabase.js`, `vendor/sortable.min.js`) e a fonte Figtree (`fonts/`) ficam no repositório. `npm run vendor` recopia de `node_modules` quando você atualizar versões.
 - **Segredos:** no navegador entram **apenas** a URL do projeto e a chave publishable (`js/config.js`). A chave da IA e a `service_role` ficam nos *secrets* das Edge Functions. Toda regra de acesso é garantida por RLS e RPCs no banco.
-- **Links públicos:** o token vai no fragmento da URL (`responder.html#TOKEN`, `relatorio.html#TOKEN`), que o navegador não envia ao servidor.
+- **Links públicos:** o token vai no fragmento da URL (`responder.html#TOKEN`, `relatorio.html#TOKEN`), que o navegador não envia ao servidor. O formulário salva sozinho (aparelho + servidor), retoma pelo mesmo link e reenvia quando a internet volta.
 - **Segurança de HTML:** as telas são montadas com o template `html```(`js/html.js`), que escapa tudo que vem do banco (proteção contra XSS).
 - **Design:** [PROJECT_STYLE.md](PROJECT_STYLE.md), [docs/design-system.md](docs/design-system.md) e `css/app.css`. Mockups da Fase 0 em `mockups/` (publicados em `/mockups/`).
 
-> Status: Fases 0 (design), 1 (base) e 2 (autenticação, usuários, empresas e questionários) concluídas em HTML puro. Próxima: Fase 3 (avaliações e formulário público).
+> Status: Fases 0 a 3 concluídas em HTML puro (design, base, cadastros, avaliações e formulário público de resposta). Próxima: Fase 4 (indicadores).
 
 ## Desenvolvimento local
 

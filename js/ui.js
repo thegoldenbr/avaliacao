@@ -35,11 +35,20 @@ export function abrirDialogo({ titulo, corpo, aoFechar }) {
       </div>
       <div data-conteudo>${corpo}</div>
     </div>`);
-  const fechar = () => el.close();
-  el.addEventListener('close', () => {
+  // Finaliza uma única vez, seja por botão (fechar), Esc ou evento 'close'. Não depender só do evento:
+  // navegadores não o disparam com a aba oculta.
+  let finalizado = false;
+  const finalizar = () => {
+    if (finalizado) return;
+    finalizado = true;
     el.remove();
     aoFechar?.();
-  });
+  };
+  const fechar = () => {
+    if (el.open) el.close();
+    finalizar();
+  };
+  el.addEventListener('close', finalizar);
   el.addEventListener('click', (e) => {
     if (e.target.closest('[data-fechar]')) fechar();
   });

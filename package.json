@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "test": "node --test js/lib/lib.test.js",
+    "test": "node --test js/lib/lib.test.js js/lib/avaliacao.test.js",
     "test:banco": "node supabase/tests/banco.mjs",
     "sql:tudo": "node scripts/gerar-sql.mjs",
     "vendor": "node scripts/vendor.mjs",

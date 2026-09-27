@@ -15,11 +15,14 @@ const PAGINAS = [
   { arquivo: 'questionario.html', titulo: 'Editor de questionário', js: 'questionario', sortable: true },
   { arquivo: 'questionario-previa.html', titulo: 'Pré-visualização', js: 'questionario-previa' },
   { arquivo: 'avaliacoes.html', titulo: 'Avaliações', js: 'avaliacoes' },
+  { arquivo: 'avaliacao.html', titulo: 'Avaliação', js: 'avaliacao', qr: true },
+  { arquivo: 'avaliacao-nova.html', titulo: 'Nova avaliação', js: 'avaliacao-nova' },
+  { arquivo: 'responder.html', titulo: 'Responder avaliação', js: 'responder' },
   { arquivo: 'configuracoes.html', titulo: 'Configurações', js: 'configuracoes' },
   { arquivo: 'mais.html', titulo: 'Mais', js: 'mais' },
 ];
 
-const pagina = ({ titulo, js, sortable }) => `<!doctype html>
+const pagina = ({ titulo, js, sortable, qr }) => `<!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
@@ -37,7 +40,7 @@ const pagina = ({ titulo, js, sortable }) => `<!doctype html>
   <noscript><p>Este sistema precisa de JavaScript ativado para funcionar.</p></noscript>
 </main>
 <script src="vendor/supabase.js"></script>
-${sortable ? '<script src="vendor/sortable.min.js"></script>\n' : ''}<script type="module" src="js/pages/${js}.js"></script>
+${sortable ? '<script src="vendor/sortable.min.js"></script>\n' : ''}${qr ? '<script src="vendor/qrcode.js"></script>\n' : ''}<script type="module" src="js/pages/${js}.js"></script>
 </body>
 </html>
 `;
