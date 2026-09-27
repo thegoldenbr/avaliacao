@@ -105,7 +105,7 @@ function desenhar() {
           <a class="btn btn--sec" href="apresentacao.html?id=${av.id}">${icone('monitor', 'icone--sm')}Modo de apresentação</a></div>
         </div><div id="indicadores"></div>`
       : ''}
-    ${statusTemIndicadores(av.status) ? html`<div id="acesso-cliente"></div>` : ''}
+    ${statusTemIndicadores(av.status) ? html`<div style="border-top:2px solid var(--color-border);padding-top:2rem;margin-top:.5rem"><div id="acesso-cliente"></div></div>` : ''}
     ${painelAcoes()}
   </section>`);
   if (av.status === 'rascunho') montarAjustes(document.getElementById('ajustes'), av, () => document.getElementById('perguntas-erro') && (document.getElementById('perguntas-erro').hidden = true));
