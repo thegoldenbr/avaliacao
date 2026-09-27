@@ -88,19 +88,25 @@ function exportar(av, ind, faixas) {
   };
 }
 
+/** Carrega tudo o que os indicadores precisam (respostas, faixas, avaliação anterior e média do modelo). */
+export async function carregarIndicadores(av) {
+  const config = dados(await supabase.from('configuracoes').select('faixas').eq('id', true).single());
+  const faixas = lerFaixas(config.faixas);
+  const [ind, anterior, media] = await Promise.all([indicadoresDe(av), carregarAnterior(av).catch(() => null), carregarMedia(av).catch(() => null)]);
+  const insights = gerarInsights(ind, { anterior: anterior?.indicadores ?? null });
+  return { ind, anterior, media, faixas, insights };
+}
+
 export async function montarIndicadores(raiz, av) {
   raiz.innerHTML = String(html`<div class="carregando" aria-busy="true"><div class="skeleton sk-bloco"></div></div>`);
-  let ind, anterior, media, faixas;
+  let ind, anterior, media, faixas, insights;
   try {
-    const config = dados(await supabase.from('configuracoes').select('faixas').eq('id', true).single());
-    faixas = lerFaixas(config.faixas);
-    [ind, anterior, media] = await Promise.all([indicadoresDe(av), carregarAnterior(av).catch(() => null), carregarMedia(av).catch(() => null)]);
+    ({ ind, anterior, media, faixas, insights } = await carregarIndicadores(av));
   } catch {
     raiz.innerHTML = String(html`<p class="erro-geral" role="alert">Não foi possível calcular os indicadores. Atualize a página e tente de novo.</p>`);
     return;
   }
 
-  const insights = gerarInsights(ind, { anterior: anterior?.indicadores ?? null });
   const geral = ind.geral;
   const faixaGeral = classificar(geral, faixas);
   const escolhas = { anterior: Boolean(anterior), meta: ind.grupos.some((g) => g.meta !== null), media: Boolean(media) };

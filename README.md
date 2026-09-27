@@ -11,7 +11,7 @@ Sistema para uma empresa avaliadora medir o desempenho de outras empresas com qu
 - **Segurança de HTML:** as telas são montadas com o template `html```(`js/html.js`), que escapa tudo que vem do banco (proteção contra XSS).
 - **Design:** [PROJECT_STYLE.md](PROJECT_STYLE.md), [docs/design-system.md](docs/design-system.md) e `css/app.css`. Mockups da Fase 0 em `mockups/` (publicados em `/mockups/`).
 
-> Status: Fases 0 a 4 concluídas em HTML puro (design, base, cadastros, avaliações, formulário público e indicadores com radar). Próxima: Fase 5 (IA e relatório).
+> Status: Fases 0 a 5 concluídas em HTML puro (design, base, cadastros, avaliações, formulário público, indicadores e editor de relatório com IA). Próxima: Fase 6 (dashboard do cliente e exportações).
 
 ## Desenvolvimento local
 
@@ -41,7 +41,7 @@ A URL do projeto e a chave publishable (públicas) já estão em `js/config.js`,
 
 **Convites:** o admin gera o link em *Configurações > Usuários > Convidar usuário* e o envia por WhatsApp ou e-mail (a função `convidar-usuario` não depende do envio de e-mails do Supabase, que tem limite baixo). Para publicar a função: `npx supabase functions deploy convidar-usuario --use-api`. O link aponta para `aceitar-convite.html`. Ela só aceita os endereços de `APP_URLS` (padrão: o do GitHub Pages e `http://localhost:5173/`); para outro domínio, `npx supabase secrets set APP_URLS="https://seu-dominio/,http://localhost:5173/"`.
 
-**Chave da IA (Fase 5):** você mesmo cadastra em *Edge Functions > Secrets* (`ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`); nunca no repositório.
+**Chave da IA:** você mesmo cadastra, sem colar no chat nem no repositório: *Edge Functions > Secrets* no painel do Supabase, ou no terminal `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-... ANTHROPIC_MODEL=claude-sonnet-5`. Sem a chave, o botão “Gerar com IA” mostra uma mensagem clara e o relatório pode ser escrito à mão. A função `gerar-relatorio` já está publicada (`npx supabase functions deploy gerar-relatorio --use-api` para atualizar).
 
 Por CLI (já usado neste projeto): `npx supabase login` (terminal interativo), `npx supabase link --project-ref rbefxbmfyvoaiubpmfwg`, `npx supabase db push` para migrations novas e `npx supabase db query --linked -f supabase/seed.sql` para o seed. 
 

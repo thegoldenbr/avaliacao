@@ -102,6 +102,7 @@ function desenhar() {
       : ''}
     ${['respondida', 'em_analise', 'publicada'].includes(av.status)
       ? html`<div class="pilha pilha--sm leitura"><h2>Respostas</h2><p>${total} perguntas respondidas${av.respondido_em ? ` em ${formatarDataHora(av.respondido_em)}` : ''}${av.respondente_nome ? ` por ${av.respondente_nome}${av.respondente_cargo ? `, ${av.respondente_cargo}` : ''}` : ''}.</p>
+        <div class="linha"><a class="btn" href="relatorio-editor.html?id=${av.id}">${icone('ia', 'icone--sm')}${av.status === 'publicada' ? 'Editar relatório publicado' : 'Análise e relatório'}</a></div>
         </div><div id="indicadores"></div>`
       : ''}
     ${painelAcoes()}

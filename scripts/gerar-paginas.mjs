@@ -16,6 +16,7 @@ const PAGINAS = [
   { arquivo: 'questionario-previa.html', titulo: 'Pré-visualização', js: 'questionario-previa' },
   { arquivo: 'avaliacoes.html', titulo: 'Avaliações', js: 'avaliacoes' },
   { arquivo: 'avaliacao.html', titulo: 'Avaliação', js: 'avaliacao', qr: true },
+  { arquivo: 'relatorio-editor.html', titulo: 'Relatório', js: 'relatorio-editor', qr: true },
   { arquivo: 'avaliacao-nova.html', titulo: 'Nova avaliação', js: 'avaliacao-nova' },
   { arquivo: 'responder.html', titulo: 'Responder avaliação', js: 'responder' },
   { arquivo: 'configuracoes.html', titulo: 'Configurações', js: 'configuracoes' },
