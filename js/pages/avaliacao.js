@@ -97,15 +97,18 @@ function desenhar() {
           <p class="muted">${av.prazo ? `Prazo até ${formatarData(av.prazo)}.` : 'Sem prazo definido.'}${av.respondente_nome ? ` Respondente: ${av.respondente_nome}.` : ''}</p></div>
         <div id="compartilhar">${painelCompartilhar(av, e)}</div>`
       : ''}
-    ${['respondida', 'em_analise', 'publicada'].includes(av.status)
-      ? html`<div class="pilha pilha--sm leitura"><h2>Respostas</h2><p>${total} perguntas respondidas${av.respondido_em ? ` em ${formatarDataHora(av.respondido_em)}` : ''}${av.respondente_nome ? ` por ${av.respondente_nome}${av.respondente_cargo ? `, ${av.respondente_cargo}` : ''}` : ''}.</p>
-        <div class="linha">
-          <a class="btn" href="relatorio-editor.html?id=${av.id}">${icone('ia', 'icone--sm')}${av.status === 'publicada' ? 'Editar relatório publicado' : 'Análise e relatório'}</a>
-          <a class="btn btn--sec" href="previa-cliente.html?id=${av.id}">${icone('olho', 'icone--sm')}Ver como o cliente</a>
-          <a class="btn btn--sec" href="apresentacao.html?id=${av.id}">${icone('monitor', 'icone--sm')}Modo de apresentação</a></div>
-        </div><div id="indicadores"></div>`
+    ${['respondida', 'em_analise', 'publicada'].includes(av.status) ? html`<div id="indicadores"></div>` : ''}
+    ${statusTemIndicadores(av.status)
+      ? html`<div style="border-top:2px solid var(--color-border);padding-top:2rem;margin-top:.5rem" class="pilha pilha--lg">
+          <div class="pilha pilha--sm leitura"><h2>Respostas</h2><p>${total} perguntas respondidas${av.respondido_em ? ` em ${formatarDataHora(av.respondido_em)}` : ''}${av.respondente_nome ? ` por ${av.respondente_nome}${av.respondente_cargo ? `, ${av.respondente_cargo}` : ''}` : ''}.</p>
+            <div class="linha">
+              <a class="btn" href="relatorio-editor.html?id=${av.id}">${icone('ia', 'icone--sm')}${av.status === 'publicada' ? 'Editar relatório publicado' : 'Análise e relatório'}</a>
+              <a class="btn btn--sec" href="previa-cliente.html?id=${av.id}">${icone('olho', 'icone--sm')}Ver como o cliente</a>
+              <a class="btn btn--sec" href="apresentacao.html?id=${av.id}">${icone('monitor', 'icone--sm')}Modo de apresentação</a></div>
+          </div>
+          <div id="acesso-cliente"></div>
+        </div>`
       : ''}
-    ${statusTemIndicadores(av.status) ? html`<div style="border-top:2px solid var(--color-border);padding-top:2rem;margin-top:.5rem"><div id="acesso-cliente"></div></div>` : ''}
     ${painelAcoes()}
   </section>`);
   if (av.status === 'rascunho') montarAjustes(document.getElementById('ajustes'), av, () => document.getElementById('perguntas-erro') && (document.getElementById('perguntas-erro').hidden = true));
