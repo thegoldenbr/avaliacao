@@ -58,7 +58,7 @@ export function abrirDialogo({ titulo, corpo, aoFechar }) {
 }
 
 /** Confirmação de ação destrutiva. Se `textoParaDigitar` for dado, o usuário precisa digitá-lo para liberar o botão. */
-export function confirmar({ titulo, descricao, textoParaDigitar, rotuloConfirmar = 'Excluir' }) {
+export function confirmar({ titulo, descricao, textoParaDigitar, rotuloConfirmar = 'Excluir', perigo = true }) {
   return new Promise((resolve) => {
     let resultado = false;
     const { el, fechar } = abrirDialogo({
@@ -73,7 +73,7 @@ export function confirmar({ titulo, descricao, textoParaDigitar, rotuloConfirmar
             : ''}
           <div class="dialogo-acoes">
             <button type="button" class="btn btn--sec" data-fechar>Cancelar</button>
-            <button type="button" class="btn btn--perigo" data-confirmar ${textoParaDigitar ? 'disabled' : ''}>${rotuloConfirmar}</button>
+            <button type="button" class="btn ${perigo ? 'btn--perigo' : ''}" data-confirmar ${textoParaDigitar ? 'disabled' : ''}>${rotuloConfirmar}</button>
           </div>
         </div>`,
     });

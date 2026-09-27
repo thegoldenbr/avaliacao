@@ -71,6 +71,6 @@ export function radar(rotulos, series, { animar = false, titulo = 'Radar de dese
       return html`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${ancora}">${r}</text>`.toString();
     })
     .join('');
-  const svg = `<svg class="radar${animar ? ' radar--anima' : ''}" viewBox="-40 0 480 400" role="img" aria-label="${titulo}">${aneis}${eixos}${escala}${formas}${pontos}${textos}</svg>`;
+  const svg = `<svg class="radar${animar ? ' radar--anima' : ''}" viewBox="-70 0 540 400" role="img" aria-label="${titulo}">${aneis}${eixos}${escala}${formas}${pontos}${textos}</svg>`;
   return html`${raw(svg)}${semLegenda ? '' : legenda(series)}${tabelaParaLeitores(rotulos, series)}`;
 }

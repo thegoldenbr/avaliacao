@@ -7,7 +7,7 @@ import { icone } from '../icones.js';
 import { qrSvg } from '../qr.js';
 import { supabase, urlDaPagina } from '../supabase.js';
 import { confirmar, toast } from '../ui.js';
-import { formatarData } from '../lib/formatacao.js';
+import { formatarData, formatarDataHora } from '../lib/formatacao.js';
 import { linkEmail, linkWhatsApp } from '../lib/avaliacao.js';
 import { mensagemDeErro } from '../lib/erros.js';
 
@@ -22,12 +22,19 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
   const nome = empresa.nome_fantasia ?? empresa.razao_social;
   const publicada = () => av.status === 'publicada';
 
+  const liberacao = () => av.relatorio_liberado_em
+    ? html`<div class="aviso aviso--ok" role="status">${icone('ok')}<div class="pilha pilha--sm"><p><b>Liberado para o cliente</b> desde ${formatarDataHora(av.relatorio_liberado_em)}. Quem tiver o link${av.relatorio_senha ? ' e o PIN' : ''} consegue ver o dashboard.</p>
+        <div><button class="btn btn--sec btn--sm" data-acesso="revogar">${icone('cadeado', 'icone--sm')}Revogar acesso do cliente</button></div></div></div>`
+    : html`<div class="aviso aviso--atencao" role="status">${icone('aviso')}<div class="pilha pilha--sm"><p><b>Travado para o cliente.</b> Quem abrir o link vê apenas um aviso de que o relatório ainda não foi liberado. Libere depois de apresentar o resultado.</p>
+        <div><button class="btn btn--sm" data-acesso="liberar">${icone('ok', 'icone--sm')}Liberar para o cliente</button></div></div></div>`;
+
   function desenhar() {
     const pin = av.relatorio_senha;
     const link = linkDoRelatorio(av.token_relatorio);
     const texto = `Olá! O relatório de desempenho de ${nome} está disponível neste link: ${link}${pin ? `\nPIN de acesso: ${pin}` : ''}`;
     raiz.innerHTML = String(html`<section class="cartao pilha pilha--lg" aria-labelledby="h-acesso">
       <div class="pilha"><h2 id="h-acesso">Link público do dashboard do cliente</h2>
+        ${publicada() ? liberacao() : ''}
         ${publicada()
           ? html`<div class="link-copia"><input class="input" id="link-relatorio" readonly aria-label="Link do relatório" value="${link}"><button class="btn btn--sec btn--icone" data-acesso="copiar-link" aria-label="Copiar link">${icone('copia')}</button></div>
             <div class="linha" style="align-items:flex-start;gap:1.5rem">${qrSvg(link, 'QR code do relatório')}
@@ -49,6 +56,15 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
           : html`<p class="muted">Sem PIN, qualquer pessoa com o link abre o dashboard.</p>`}
       </div>
     </section>`);
+  }
+
+  async function liberar(liberarAgora) {
+    const { data, error } = await supabase.rpc('liberar_relatorio', { p_avaliacao_id: av.id, p_liberar: liberarAgora });
+    if (error) return toast(mensagemDeErro(error, 'Não foi possível alterar a liberação.'), 'erro');
+    av.relatorio_liberado_em = data;
+    desenhar();
+    aoAlterar?.();
+    toast(liberarAgora ? 'Relatório liberado para o cliente.' : 'Acesso do cliente revogado: o link voltou a ficar travado.');
   }
 
   async function definirPin(ativar, renovar = false) {
@@ -79,6 +95,14 @@ export function montarAcessoCliente(raiz, av, empresa, { aoAlterar } = {}) {
     const b = e.target.closest('[data-acesso]');
     if (!b) return;
     const acao = b.dataset.acesso;
+    if (acao === 'liberar') {
+      if (!(await confirmar({ titulo: 'Já apresentou o resultado?', descricao: `Só libere o dashboard para ${nome} depois de apresentar a avaliação. Ao confirmar que já foi apresentada, o link passa a abrir para o cliente${av.relatorio_senha ? ' (com o PIN)' : ''}. Você pode revogar a qualquer momento.`, rotuloConfirmar: 'Sim, já apresentei: liberar', perigo: false }))) return;
+      return liberar(true);
+    }
+    if (acao === 'revogar') {
+      if (!(await confirmar({ titulo: 'Revogar acesso do cliente', descricao: 'O link deixa de mostrar o relatório imediatamente. Você pode liberar de novo depois.', rotuloConfirmar: 'Revogar acesso' }))) return;
+      return liberar(false);
+    }
     if (acao === 'copiar-link') return copiar(linkDoRelatorio(av.token_relatorio), 'Link copiado.');
     if (acao === 'copiar-pin') return copiar(av.relatorio_senha, 'PIN copiado.');
     if (acao === 'novo-pin') {

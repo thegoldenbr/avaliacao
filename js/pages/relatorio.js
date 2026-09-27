@@ -66,6 +66,7 @@ async function carregar(pinDigitado = null) {
   }
   if (!data) return aviso(null, { icon: 'aviso', cor: 'faixa--atencao', titulo: 'Link inválido', texto: 'Não encontramos este relatório. Confira se o endereço está completo ou peça um novo link a quem enviou.' });
   aplicarCor(data.marca);
+  if (data.liberado === false) return aviso(data.marca, { icon: 'cadeado', cor: 'faixa--atencao', titulo: 'Relatório ainda não liberado', texto: 'O resultado será liberado depois da apresentação. Assim que for liberado, este mesmo link passa a abrir o relatório.' });
   if (data.protegido) {
     if (data.bloqueado) return pedirPin(data.marca, { bloqueado: true });
     if (data.erro) {

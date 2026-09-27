@@ -56,8 +56,8 @@ export function radarSvgIndependente(rotulos, series, titulo = 'Radar de desempe
   // Legenda embutida (linha de cada série + nome)
   const legenda = series.map((s, i) => `<line x1="20" y1="${altura + 22 + i * 22}" x2="52" y2="${altura + 22 + i * 22}" stroke="${COR[s.tipo]}" stroke-width="3" stroke-dasharray="${TRACEJADO[s.tipo]}"/><text x="60" y="${altura + 27 + i * 22}" font-size="14" fill="#0F172A">${esc(s.nome)}</text>`).join('');
   const total = altura + 20 + series.length * 22 + 10;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="480" height="${total}" viewBox="-40 0 480 ${total}" font-family="Arial, Helvetica, sans-serif" role="img" aria-label="${esc(titulo)}"><rect x="-40" width="480" height="${total}" fill="#FFFFFF"/>${corpo}${legenda}</svg>`;
-  return { svg, largura: 480, altura: total };
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="540" height="${total}" viewBox="-70 0 540 ${total}" font-family="Arial, Helvetica, sans-serif" role="img" aria-label="${esc(titulo)}"><rect x="-70" width="540" height="${total}" fill="#FFFFFF"/>${corpo}${legenda}</svg>`;
+  return { svg, largura: 540, altura: total };
 }
 
 /** SVG → PNG (data URL) usando canvas. `escala` 2 gera imagem nítida. */

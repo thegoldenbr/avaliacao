@@ -86,9 +86,13 @@ await db.exec(`set role anon`);
 ok((await salvar(av4.tr, { respostas: resp(1) }))?.includes('prazo_encerrado'), 'prazo encerrado bloqueia gravação');
 ok((await q(`select public.obter_formulario($1) f`, [av4.tr]))[0].f.encerrada === true, 'formulário sinaliza encerrada');
 
+ok((await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r.liberado === false, 'relatório não liberado ao cliente: link só informa que está travado');
+await db.exec(`reset role`);
+await db.exec(`update public.avaliacoes set relatorio_liberado_em = now() where token_relatorio = '${av2.tl}'`);
+await db.exec(`set role anon`);
 const rel = (await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r;
 ok(rel.disponivel === true && rel.conteudo.seed === true && rel.empresa === 'Serra Azul', 'obter_relatorio devolve o snapshot publicado');
-ok((await q(`select public.obter_relatorio($1) r`, [av3.tl]))[0].r.disponivel === false, 'relatório não publicado → disponivel=false');
+ok((await q(`select public.obter_relatorio($1) r`, [av3.tl]))[0].r.disponivel !== true, 'relatório não publicado nem liberado → não disponível');
 ok((await q(`select public.obter_relatorio('nada') r`))[0].r === null, 'token de relatório inexistente → null');
 await db.exec(`reset role`);
 ok((await num(`select visualizacoes n from public.avaliacoes where token_relatorio=$1`, [av2.tl])) === 1, 'visualização registrada');
@@ -209,6 +213,12 @@ ok((await q(`select public.definir_senha_relatorio($1,false) c`, [avPub]))[0].c 
 await db.exec(`reset role`); await db.exec(`set role anon`);
 ok((await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r.disponivel === true, 'sem senha configurada o link abre direto, como antes');
 ok((await q(`select public.obter_relatorio('nada') r`))[0].r === null, 'token inexistente continua devolvendo null');
+await como(admin);
+ok((await q(`select public.liberar_relatorio($1,false) t`, [avPub]))[0].t === null, 'operador revoga a liberação');
+ok((await q(`select public.liberar_relatorio($1,true) t`, [avPub]))[0].t !== null, 'operador libera de novo');
+ok((await q(`select public.liberar_relatorio($1,false) t`, [avPub]))[0].t === null, 'e revoga outra vez');
+await db.exec(`reset role`); await db.exec(`set role anon`);
+ok((await q(`select public.obter_relatorio($1) r`, [av2.tl]))[0].r.liberado === false, 'depois de revogar, o link volta a ficar travado');
 await db.exec(`reset role`);
 
 console.log(falhas ? `\n${falhas} falha(s)` : '\ntodos os testes passaram');

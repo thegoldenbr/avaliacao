@@ -545,3 +545,54 @@ body:has(.ap) { overflow: hidden; }
 .ap--quieto { cursor: none; }
 .ap-controles:focus-within { opacity: 1; }
 .ap-contador { min-width: 4.5rem; text-align: center; color: var(--color-text-muted); }
+
+/* Apresentação: paleta própria de alto contraste (não depende do tema do sistema) e tipografia maior. */
+.ap {
+  --color-background: #070D1A;
+  --color-surface: #16233B;
+  --color-border: #4A5F85;
+  --color-text: #FFFFFF;
+  --color-text-muted: #D5DEEE;
+  --color-primary: #A9BBFF;
+  --color-primary-soft: #1B2B5C;
+  --color-success: #4ADE9A;
+  --color-error: #FF8A8A;
+  --color-warning: #FFC94D;
+  --faixa-critico: #FF8A8A;
+  --faixa-atencao: #FFC94D;
+  --faixa-bom: #B7E35A;
+  --faixa-excelente: #4ADE9A;
+  --serie-anterior: #C3CFE6;
+  --serie-meta: #FFC94D;
+  --serie-media: #D9C8FF;
+  background: radial-gradient(110% 80% at 15% 0%, #14265A 0%, #0A1226 55%, #070D1A 100%);
+  font-size: clamp(1rem, 1.25vw, 1.4rem);
+  line-height: 1.5;
+}
+.ap-slide { transition-duration: .3s, .3s, 0s; transition-delay: 0s, 0s, .3s; }
+.ap-slide.ativo { transition-duration: .3s, .3s; transition-delay: 0s; }
+.ap h1, .ap h2, .ap h3 { color: #FFFFFF; font-weight: 800; }
+.ap-sobre { color: #C9D6FF; }
+.ap-sub, .ap-de, .ap-meta-info, .ap-legenda, .ap-tema, .ap-impacto, .ap-rec-meta, .ap-final, .ap-rodape, .ap-contador { color: var(--color-text-muted); }
+.ap-linha-barra { font-size: clamp(1.05rem, 1.7vw, 1.45rem); font-weight: 600; color: #FFFFFF; }
+.ap-trilho { background: #0E1A31; border: 2px solid #5A7099; height: clamp(1.1rem, 2.4vh, 1.6rem); }
+.ap-val { font-weight: 800; }
+.ap-cartao, .ap-rec, .ap-horizonte, .ap-analise { background: #16233B; border-color: #4A5F85; color: #FFFFFF; }
+.ap-cartao, .ap-rec { font-size: clamp(1.05rem, 1.55vw, 1.35rem); }
+.ap-cartao h3, .ap-rec h3 { font-size: clamp(1.2rem, 2vw, 1.7rem); }
+.ap-analise { font-size: clamp(1.05rem, 1.65vw, 1.4rem); }
+.ap-horizonte ul { font-size: clamp(1.05rem, 1.55vw, 1.35rem); }
+.ap-horizonte h3 { color: #C9D6FF; }
+.ap-passos { font-size: clamp(1.2rem, 2.1vw, 1.75rem); }
+.ap-final { font-size: clamp(1.1rem, 1.9vw, 1.5rem); }
+.ap-resumo { font-size: clamp(1.3rem, 2.5vw, 2.1rem); color: #FFFFFF; }
+.ap-faixa { background: #0E1A31; border: 2px solid currentColor; font-weight: 800; }
+.ap-controles { background: #16233B; border-color: #6F86B3; }
+.ap-controles .btn { color: #FFFFFF; }
+.ap-controles .btn:disabled { color: #7F8FAE; }
+.ap-progresso { background: #24344F; }
+.ap-progresso span { background: #A9BBFF; }
+.ap-marca { color: #FFFFFF; }
+.ap-meta-info { font-size: clamp(1rem, 1.4vw, 1.2rem); }
+.ap-radar .radar text { font-size: 13px; fill: #FFFFFF; }
+.ap-radar .legenda { font-size: clamp(.95rem, 1.3vw, 1.15rem); color: #FFFFFF; }
